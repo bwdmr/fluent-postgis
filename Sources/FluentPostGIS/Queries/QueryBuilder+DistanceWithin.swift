@@ -1,4 +1,5 @@
 import FluentPostgreSQL
+import WKCodable
 
 extension QueryBuilder where
     Database: QuerySupporting,
@@ -39,6 +40,18 @@ extension QueryBuilder where
         return self.filter(custom: Database.queryFilterGeometryDistanceWithin(field, filter, value))
     }
     
+    @discardableResult
+    public func filterGeographyDistanceWithin<T,V>(_ key: KeyPath<Result, T>, _ filter: V, _ value: Double) -> Self
+        where T: GeometryConvertible, V: GeometryConvertible
+    {
+        return filterGeographyDistanceWithin(Database.queryField(.keyPath(key)), Database.queryFilterValueGeographic(filter),  Database.queryFilterValue([value]))
+    }
+    
+    @discardableResult
+    private func filterGeographyDistanceWithin(_ field: Database.QueryField, _ filter: Database.QueryFilterValue, _ value: Database.QueryFilterValue) -> Self {
+        return self.filter(custom: Database.filterGeographyDistanceWithin(field, filter, value))
+    }
+    
 }
 
 extension QuerySupporting where
@@ -48,6 +61,29 @@ extension QuerySupporting where
     QueryFilterValue == QueryFilter
 {
     public static func queryFilterGeometryDistanceWithin(_ field: QueryField, _ filter: QueryFilterValue, _ value: QueryFilterValue) -> QueryFilter {
+        let args: [QueryFilter.Function.Argument] = [
+            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
+            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
+            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(value as! PostgreSQLExpression),
+            ] as! [QueryFilter.Function.Argument]
+        return .function("ST_DWithin", args)
+    }
+}
+
+extension QuerySupporting where QueryFilterValue: SQLExpression {
+    public static func queryFilterValueGeographic<T: GeometryConvertible>(_ geometry: T) -> QueryFilterValue {
+        let geometryText = WKTEncoder().encode(geometry.geometry)
+        return .function("ST_GeogFromText", [.expression(.literal(.string(geometryText)))])
+    }
+}
+
+extension QuerySupporting where
+    QueryFilter: SQLExpression,
+    QueryField == QueryFilter.ColumnIdentifier,
+    QueryFilterMethod == QueryFilter.BinaryOperator,
+    QueryFilterValue == QueryFilter
+{
+    public static func filterGeographyDistanceWithin(_ field: QueryField, _ filter: QueryFilterValue, _ value: QueryFilterValue) -> QueryFilter {
         let args: [QueryFilter.Function.Argument] = [
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),

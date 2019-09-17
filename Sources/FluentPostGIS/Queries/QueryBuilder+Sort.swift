@@ -22,7 +22,7 @@ extension QuerySupporting where
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
             ] as! [QuerySort.Expression.Function.Argument]
-        return .orderBy(.function("ST Distance", args), .ascending)
+        return .orderBy(.function("ST_Distance", args), .ascending)
     }
 }
 

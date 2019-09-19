@@ -48,7 +48,19 @@ extension QueryBuilder where
     }
     
     @discardableResult
+    public func filterGeographyDistanceWithin<T,V, OtherResult>(_ key: KeyPath<Result, T>, _ filter: V, _ valueKey: KeyPath<OtherResult, Double>) -> Self
+        where T: GeometryConvertible, V: GeometryConvertible, OtherResult: Model, OtherResult.Database == Database
+    {
+        return filterGeographyDistanceWithin(Database.queryField(.keyPath(key)), Database.queryFilterValueGeographic(filter),  Database.queryField(.keyPath(valueKey)))
+    }
+    
+    @discardableResult
     private func filterGeographyDistanceWithin(_ field: Database.QueryField, _ filter: Database.QueryFilterValue, _ value: Database.QueryFilterValue) -> Self {
+        return self.filter(custom: Database.filterGeographyDistanceWithin(field, filter, value))
+    }
+    
+    @discardableResult
+    private func filterGeographyDistanceWithin(_ field: Database.QueryField, _ filter: Database.QueryFilterValue, _ value: Database.QueryField) -> Self {
         return self.filter(custom: Database.filterGeographyDistanceWithin(field, filter, value))
     }
     
@@ -88,6 +100,15 @@ extension QuerySupporting where
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
             GenericSQLFunctionArgument<PostgreSQLExpression>.expression(value as! PostgreSQLExpression),
+            ] as! [QueryFilter.Function.Argument]
+        return .function("ST_DWithin", args)
+    }
+    
+    public static func filterGeographyDistanceWithin(_ field: QueryField, _ filter: QueryFilterValue, _ valueField: QueryField) -> QueryFilter {
+        let args: [QueryFilter.Function.Argument] = [
+            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
+            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
+            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(valueField as! PostgreSQLColumnIdentifier)),
             ] as! [QueryFilter.Function.Argument]
         return .function("ST_DWithin", args)
     }

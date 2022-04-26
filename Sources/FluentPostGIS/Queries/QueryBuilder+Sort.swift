@@ -14,7 +14,7 @@ extension QueryBuilder {
     /// - returns: Query builder for chaining.
     @discardableResult
     public func sortByDistance<F, V>(between field: KeyPath<Model, F>, _ value: V) -> Self
-    where F: QueryableProperty, V: GeometryConvertible {
+    where F: QueryableProperty, F.Model == Model, V: GeometryConvertible {
         return querySortByDistance(QueryBuilder.path(field),
                                    QueryBuilder.queryExpressionGeometry(value))
     }

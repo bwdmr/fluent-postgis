@@ -7,7 +7,7 @@ extension QueryBuilder {
         _ field: KeyPath<Model, Field>,
         _ value: Field.Value,
         _ distance: Double
-    ) -> Self where Field: QueryableProperty, Field.Value: GeometryConvertible {
+    ) -> Self where Field: QueryableProperty, Field.Model == Model, Field.Value: GeometryConvertible {
         self.queryFilterDistanceWithin(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(value),
@@ -20,11 +20,32 @@ extension QueryBuilder {
         _ field: KeyPath<Model, Field>,
         _ value: Field.Value,
         _ distance: Double
-    ) -> Self where Field: QueryableProperty, Field.Value: GeometryConvertible {
+    ) -> Self where Field: QueryableProperty, Field.Model == Model, Field.Value: GeometryConvertible {
         self.queryFilterDistanceWithin(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeography(value),
             SQLLiteral.numeric(String(distance))
+        )
+    }
+
+    @discardableResult
+    public func filterGeographyDistanceWithin<Field, OtherModel, OtherField>(
+        _ field: KeyPath<Model, Field>,
+        _ value: Field.Value,
+        _ distance: KeyPath<OtherModel, OtherField>
+    ) -> Self
+    where Field: QueryableProperty,
+          Field.Model == Model,
+          Field.Value: GeometryConvertible,
+          OtherModel: Schema,
+          OtherField: QueryableProperty,
+          OtherField.Model == OtherModel,
+          OtherField.Value == Double
+    {
+        self.queryFilterDistanceWithin(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeography(value),
+            SQLColumn(QueryBuilder.path(distance))
         )
     }
 }

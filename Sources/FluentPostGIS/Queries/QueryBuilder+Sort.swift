@@ -26,4 +26,3 @@ extension QueryBuilder {
         return self
     }
 }
-

@@ -6,6 +6,11 @@ extension QueryBuilder {
         let geometryText = WKTEncoder().encode(geometry.geometry)
         return SQLFunction("ST_GeomFromEWKT", args: [SQLLiteral.string(geometryText)])
     }
+
+    static func queryExpressionGeography<T: GeometryConvertible>(_ geometry: T) -> SQLExpression {
+        let geometryText = WKTEncoder().encode(geometry.geometry)
+        return SQLFunction("ST_GeogFromText", args: [SQLLiteral.string(geometryText)])
+    }
     
     static func path<F>(_ field: KeyPath<Model, F>) -> String where F: QueryableProperty {
         return Model.path(for: field).map(\.description).joined(separator: "_")

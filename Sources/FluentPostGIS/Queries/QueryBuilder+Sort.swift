@@ -1,29 +1,29 @@
-import FluentPostgreSQL
+import FluentKit
+import FluentSQL
 
-extension QueryBuilder where
-    Database: QuerySupporting,
-    Database.QuerySort: SQLOrderBy,
-    Database.QueryFilter: SQLExpression,
-    Database.QueryFilterValue == Database.QueryFilter
-{
+extension QueryBuilder {
+    /// Applies an `ST_Distance` sort to this query. Usually you will use the filter operators to do this.
+    ///
+    ///     let users = try User.query(on: conn)
+    ///         .sortByDistance(\.$position, targetPosition)
+    ///         .all()
+    ///
+    /// - parameters:
+    ///     - key: Swift `KeyPath` to a field on the model to filter.
+    ///     - value: Geometry value to filter by.
+    /// - returns: Query builder for chaining.
     @discardableResult
-    public func sortByDistance<T,V>(between key: KeyPath<Result, T>, _ filter: V) -> Self
-    where T: GeometryConvertible, V: GeometryConvertible {
-        return self.sort(Database.distanceSort(between: Database.queryField(.keyPath(key)), Database.queryFilterValueGeographic(filter)))
-    }
-
-}
-
-extension QuerySupporting where
-    QuerySort: SQLOrderBy
-{
-    public static func distanceSort(between field: QueryField, _ filter: QueryFilterValue) -> QuerySort {
-        let args: [QuerySort.Expression.Function.Argument] = [
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
-            ] as! [QuerySort.Expression.Function.Argument]
-        return .orderBy(.function("ST_Distance", args), .ascending)
+    public func sortByDistance<F, V>(between field: KeyPath<Model, F>, _ value: V) -> Self
+    where F: QueryableProperty, V: GeometryConvertible {
+        return querySortByDistance(QueryBuilder.path(field),
+                                   QueryBuilder.queryExpressionGeometry(value))
     }
 }
 
+extension QueryBuilder {
+    public func querySortByDistance(_ path: String, _ filter: SQLExpression) -> Self {
+        applySort(function: "ST_Distance", args: [SQLColumn(path), filter])
+        return self
+    }
+}
 

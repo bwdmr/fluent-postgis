@@ -31,5 +31,5 @@ extension GeographicMultiPoint2D: GeometryConvertible, GeometryCollectable {
 }
 
 extension GeographicMultiPoint2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geographicMultiPoint }
+    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geographicMultiPoint }
 }

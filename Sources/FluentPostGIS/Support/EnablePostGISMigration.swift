@@ -1,10 +1,8 @@
-import Foundation
 import FluentKit
+import Foundation
 import SQLKit
-import PostgresNIO
 
 public struct EnablePostGISMigration: Migration {
-    
     public init() {}
     
     enum EnablePostGISMigrationError: Error {

@@ -2,7 +2,6 @@
 
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20OS%20X-blue.svg)
 ![Package Managers](https://img.shields.io/badge/package%20managers-SwiftPM-yellow.svg)
-[![Twitter rabc](https://img.shields.io/badge/twitter-rabc-green.svg)](http://twitter.com/rabc)
 
 PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor)
 
@@ -83,6 +82,7 @@ try UserLocation.query(on: conn).filterGeometryDistanceWithin(\.$location, user.
 |filterGeometryOverlaps|
 |filterGeometryTouches|
 |filterGeometryWithin|
+|sortByDistance|
 
 :gift_heart: Contributing
 ------------
@@ -94,5 +94,6 @@ MIT
 
 :alien: Author
 ------
+BrokenHands, Tim Condon, Nikolai Guyot - https://www.brokenhands.io/
 Ricardo Carvalho - https://rabc.github.io/
 Phil Larson - http://dizm.com

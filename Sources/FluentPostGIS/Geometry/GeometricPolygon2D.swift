@@ -16,11 +16,9 @@ public struct GeometricPolygon2D: Codable, Equatable, CustomStringConvertible {
         self.exteriorRing = exteriorRing
         self.interiorRings = interiorRings
     }
-    
 }
 
 extension GeometricPolygon2D: GeometryConvertible, GeometryCollectable {
-    
     /// Convertible type
     public typealias GeometryType = WKCodable.Polygon
 
@@ -42,5 +40,5 @@ extension GeometricPolygon2D: GeometryConvertible, GeometryCollectable {
 }
 
 extension GeometricPolygon2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geometricPolygon }
+    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geometricPolygon }
 }

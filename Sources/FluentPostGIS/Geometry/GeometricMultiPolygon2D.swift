@@ -32,5 +32,5 @@ extension GeometricMultiPolygon2D: GeometryConvertible, GeometryCollectable {
 }
 
 extension GeometricMultiPolygon2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geometricMultiLineString }
+    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geometricMultiLineString }
 }

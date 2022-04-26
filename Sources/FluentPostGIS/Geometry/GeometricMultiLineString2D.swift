@@ -32,14 +32,6 @@ extension GeometricMultiLineString2D: GeometryConvertible, GeometryCollectable {
     }
 }
 
-//extension GeometricMultiLineString2D: PostgreSQLDataTypeStaticRepresentable, ReflectionDecodable {
-//    
-//    /// See `PostgreSQLDataTypeStaticRepresentable`.
-//    public static var postgreSQLDataType: PostgreSQLDataType { return .geometricMultiLineString }
-//    
-//    /// See `ReflectionDecodable`.
-//    public static func reflectDecoded() throws -> (GeometricMultiLineString2D, GeometricMultiLineString2D) {
-//        return (.init(lineStrings: []),
-//                .init(lineStrings: [ GeometricLineString2D(points: [GeometricPoint2D(x: 0, y: 0)]) ]))
-//    }
-//}
+extension GeometricMultiLineString2D: PostGISDataType {
+    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geometricMultiLineString }
+}

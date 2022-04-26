@@ -3,7 +3,6 @@ import FluentKit
 import WKCodable
 
 public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible  {
-   
     /// The points
     public let geometries: [GeometryCollectable]
 
@@ -11,7 +10,6 @@ public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringCo
     public init(geometries: [GeometryCollectable]) {
         self.geometries = geometries
     }
-
 }
 
 extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectable {
@@ -77,5 +75,5 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
 }
 
 extension GeographicGeometryCollection2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geographicGeometryCollection }
+    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geographicGeometryCollection }
 }

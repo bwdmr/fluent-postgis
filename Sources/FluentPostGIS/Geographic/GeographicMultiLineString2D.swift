@@ -1,8 +1,8 @@
 import Foundation
-import PostgreSQL
+import FluentKit
 import WKCodable
 
-public struct GeographicMultiLineString2D: Codable, Equatable, CustomStringConvertible, PostgreSQLDataConvertible {
+public struct GeographicMultiLineString2D: Codable, Equatable, CustomStringConvertible {
     /// The points
     public let lineStrings: [GeographicLineString2D]
     
@@ -31,14 +31,6 @@ extension GeographicMultiLineString2D: GeometryConvertible, GeometryCollectable 
     }
 }
 
-extension GeographicMultiLineString2D: PostgreSQLDataTypeStaticRepresentable, ReflectionDecodable {
-    
-    /// See `PostgreSQLDataTypeStaticRepresentable`.
-    public static var postgreSQLDataType: PostgreSQLDataType { return .geographicMultiLineString }
-    
-    /// See `ReflectionDecodable`.
-    public static func reflectDecoded() throws -> (GeographicMultiLineString2D, GeographicMultiLineString2D) {
-        return (.init(lineStrings: []),
-                .init(lineStrings: [ GeographicLineString2D(points: [GeographicPoint2D(longitude: 0, latitude: 0)]) ]))
-    }
+extension GeographicMultiLineString2D: PostGISDataType {
+    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geographicMultiLineString }
 }

@@ -1,5 +1,6 @@
 import WKCodable
-import PostgreSQL
+import FluentKit
+import Foundation
 
 public protocol GeometryCollectable {
     var baseGeometry: Geometry { get }
@@ -25,20 +26,19 @@ extension GeometryConvertible where Self: CustomStringConvertible {
     }
 }
 
-extension GeometryConvertible where Self: Codable {
-    public static func convertFromPostgreSQLData(_ data: PostgreSQLData) throws -> Self {
-        if let value = data.binary {
-            let decoder = WKBDecoder()
-            let geometry: GeometryType = try decoder.decode(from: value)
-            return self.init(geometry: geometry)
-        } else {
-            throw PostGISError.decode(self, from: data)
-        }
+extension GeometryConvertible {
+    public init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(Data.self)
+        let decoder = WKBDecoder()
+        let geometry: GeometryType = try decoder.decode(from: value)
+        self.init(geometry: geometry)
     }
-    
-    public func convertToPostgreSQLData() throws -> PostgreSQLData {
-        let encoder = WKBEncoder(byteOrder: .littleEndian)
-        let data = encoder.encode(geometry)
-        return PostgreSQLData(.geometry, binary: data)
+
+    public func encode(to encoder: Encoder) throws {
+        let wkEncoder = WKBEncoder(byteOrder: .littleEndian)
+        let data = wkEncoder.encode(geometry)
+
+        var container = encoder.singleValueContainer()
+        try container.encode(data)
     }
 }

@@ -1,8 +1,8 @@
 import Foundation
-import PostgreSQL
+import FluentKit
 import WKCodable
 
-public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible, PostgreSQLDataConvertible  {
+public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible  {
    
     /// The points
     public let geometries: [GeometryCollectable]
@@ -76,14 +76,6 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
     }
 }
 
-extension GeographicGeometryCollection2D: PostgreSQLDataTypeStaticRepresentable, ReflectionDecodable {
-    
-    /// See `PostgreSQLDataTypeStaticRepresentable`.
-    public static var postgreSQLDataType: PostgreSQLDataType { return .geographicGeometryCollection }
-    
-    /// See `ReflectionDecodable`.
-    public static func reflectDecoded() throws -> (GeographicGeometryCollection2D, GeographicGeometryCollection2D) {
-        return (.init(geometries: []),
-                .init(geometries: [ GeographicPolygon2D(exteriorRing: GeographicLineString2D(points: [GeographicPoint2D(longitude:0, latitude:0)]))]))
-    }
+extension GeographicGeometryCollection2D: PostGISDataType {
+    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geographicGeometryCollection }
 }

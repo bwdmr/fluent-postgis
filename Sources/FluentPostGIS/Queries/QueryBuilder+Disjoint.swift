@@ -1,12 +1,7 @@
-import FluentPostgreSQL
+import FluentSQL
+import WKCodable
 
-extension QueryBuilder where
-    Database: QuerySupporting,
-    Database.QueryFilter: SQLExpression,
-    Database.QueryField == Database.QueryFilter.ColumnIdentifier,
-    Database.QueryFilterMethod == Database.QueryFilter.BinaryOperator,
-    Database.QueryFilterValue == Database.QueryFilter
-{
+extension QueryBuilder {
     /// Applies an ST_Disjoint filter to this query. Usually you will use the filter operators to do this.
     ///
     ///     let users = try User.query(on: conn)
@@ -18,10 +13,11 @@ extension QueryBuilder where
     ///     - value: Geometry value to filter by.
     /// - returns: Query builder for chaining.
     @discardableResult
-    public func filterGeometryDisjoint<T,V>(_ key: KeyPath<Result, T>, _ filter: V) -> Self
-        where T: GeometryConvertible, V: GeometryConvertible
+    public func filterGeometryDisjoint<F,V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
+        where F: QueryableProperty, V: GeometryConvertible
     {
-        return filterGeometryDisjoint(Database.queryField(.keyPath(key)), Database.queryFilterValueGeometry(filter))
+        return queryGeometryDisjoint(QueryBuilder.path(field),
+                                     QueryBuilder.queryExpressionGeometry(value))
     }
     
     /// Applies an ST_Disjoint filter to this query. Usually you will use the filter operators to do this.
@@ -35,60 +31,23 @@ extension QueryBuilder where
     ///     - key: Swift `KeyPath` to a field on the model to filter.
     /// - returns: Query builder for chaining.
     @discardableResult
-    public func filterGeometryDisjoint<T,V>(_ value: V, _ key: KeyPath<Result, T>) -> Self
-        where T: GeometryConvertible, V: GeometryConvertible
+    public func filterGeometryDisjoint<F,V>(_ value: V, _ field: KeyPath<Model, F>) -> Self
+        where F: QueryableProperty, V: GeometryConvertible
     {
-        return filterGeometryDisjoint(Database.queryFilterValueGeometry(value), Database.queryField(.keyPath(key)))
-    }
-    
-    /// Applies an ST_Disjoint filter to this query. Usually you will use the filter operators to do this.
-    ///
-    ///     let users = try User.query(on: conn)
-    ///         .filterGeometryDisjoint("area", path)
-    ///         .all()
-    ///
-    /// - parameters:
-    ///     - field: Name to a field on the model to filter.
-    ///     - value: Value to filter by.
-    /// - returns: Query builder for chaining.
-    @discardableResult
-    private func filterGeometryDisjoint(_ field: Database.QueryField, _ value: Database.QueryFilterValue) -> Self {
-        return self.filter(custom: Database.queryGeometryDisjoint(field, value))
-    }
-    
-    /// Applies an ST_Disjoint filter to this query. Usually you will use the filter operators to do this.
-    ///
-    ///     let users = try User.query(on: conn)
-    ///         .filterGeometryDisjoint(area, "path")
-    ///         .all()
-    ///
-    /// - parameters:
-    ///     - value: Value to filter by.
-    ///     - field: Name to a field on the model to filter.
-    /// - returns: Query builder for chaining.
-    @discardableResult
-    private func filterGeometryDisjoint(_ value: Database.QueryFilterValue, _ field: Database.QueryField) -> Self {
-        return self.filter(custom: Database.queryGeometryDisjoint(value, field))
+        return queryGeometryDisjoint(QueryBuilder.queryExpressionGeometry(value),
+                                     QueryBuilder.path(field))
     }
 }
 
-extension QuerySupporting where
-    QueryFilter: SQLExpression,
-    QueryField == QueryFilter.ColumnIdentifier,
-    QueryFilterMethod == QueryFilter.BinaryOperator,
-    QueryFilterValue == QueryFilter
-{
+extension QueryBuilder {
     /// Creates an instance of `QueryFilter` for ST_Disjoint from a field and value.
     ///
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public static func queryGeometryDisjoint(_ field: QueryField, _ value: QueryFilterValue) -> QueryFilter {
-        let args: [QueryFilter.Function.Argument] = [
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(value as! PostgreSQLExpression),
-            ] as! [QueryFilter.Function.Argument]
-        return .function("ST_Disjoint", args)
+    public func queryGeometryDisjoint(_ path: String, _ value: SQLExpression) -> Self {
+        applyFilter(function: "ST_Disjoint", path: path, value: value)
+        return self
     }
     
     /// Creates an instance of `QueryFilter` for ST_Disjoint from a field and value.
@@ -96,10 +55,8 @@ extension QuerySupporting where
     /// - parameters:
     ///     - value: Value type.
     ///     - field: Field to filter.
-    public static func queryGeometryDisjoint(_ value: QueryFilterValue, _ field: QueryField) -> QueryFilter {
-        let args: [QueryFilter.Function.Argument] = [
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(value as! PostgreSQLExpression), GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
-            ] as! [QueryFilter.Function.Argument]
-        return .function("ST_Disjoint", args)
+    public func queryGeometryDisjoint(_ value: SQLExpression, _ path: String) -> Self {
+        applyFilter(function: "ST_Disjoint", value: value, path: path)
+        return self
     }
 }

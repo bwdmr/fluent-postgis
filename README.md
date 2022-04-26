@@ -1,18 +1,17 @@
 # FluentPostGIS
 
-[![Build Status](https://travis-ci.org/plarson/fluent-postgis.svg?branch=master)](https://travis-ci.org/plarson/fluent-postgis)
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20OS%20X-blue.svg)
 ![Package Managers](https://img.shields.io/badge/package%20managers-SwiftPM-yellow.svg)
-[![Twitter dizm](https://img.shields.io/badge/twitter-dizm-green.svg)](http://twitter.com/dizm)
+[![Twitter rabc](https://img.shields.io/badge/twitter-rabc-green.svg)](http://twitter.com/rabc)
 
-PostGIS support for [FluentPostgreSQL](https://github.com/vapor/fluent-postgresql) and [Vapor](https://github.com/vapor/vapor)
+PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor)
 
 # Installation
 
 ## Swift Package Manager
 
 ```swift
-.package(url: "https://github.com/plarson/fluent-postgis.git", .branch("master"))
+.package(url: "https://github.com/rabc/fluent-postgis.git", .branch("vapor_4"))
 ```
 # Setup
 Import module
@@ -20,19 +19,41 @@ Import module
 import FluentPostGIS
 ```
 
-Add to ```configure.swift```
+Optionally, you can add a `Migration` to enable PostGIS:
 ```swift
-try services.register(FluentPostGISProvider())
+app.migrations.add(EnablePostGISMigration())
+
 ```
+
 # Models
-Add ```GISGeographicPoint2D``` to your models
+Add a type to your model
 ```swift
-final class User: PostgreSQLModel {
+final class UserLocation: Model {
+    static let schema = "user_location"
+    
+    @ID(custom: "id", generatedBy: .database)
     var id: Int?
-    var name: String
-    var location: GISGeographicPoint2D?
+    @Field(key: "location")
+    var location: GeometricPoint2D
 }
 ```
+
+Then use its data type in the `Migration`:
+
+```swift
+struct UserLocationMigration: Migration {
+    func prepare(on database: Database) -> EventLoopFuture<Void> {
+        return database.schema(UserLocation.schema)
+            .field("id", .int, .identifier(auto: true))
+            .field("location", GeometricPoint2D.dataType)
+            .create()
+    }
+    func revert(on database: Database) -> EventLoopFuture<Void> {
+        return database.schema(UserLocation.schema).delete()
+    }
+}
+```
+
 | Geometric Types | Geographic Types  |
 |---|---|
 |GeometricPoint2D|GeographicPoint2D|
@@ -44,10 +65,10 @@ final class User: PostgreSQLModel {
 |GeometricGeometryCollection2D|GeographicGeometryCollection2D|
 
 # Queries
-Query locations using ```ST_DWithin```
+Query using any of the filter functions:
 ```swift        
-let searchLocation = GISGeographicPoint2D(longitude: -71.060316, latitude: 48.432044)
-try User.query(on: conn).filterGeometryDistanceWithin(\User.location, searchLocation, 1000).all().wait()
+let searchLocation = GeometricPoint2D(x: 1, y: 2)
+try UserLocation.query(on: conn).filterGeometryDistanceWithin(\.$location, user.location, 1000).all().wait()
 ```
 
 | Queries |
@@ -73,4 +94,5 @@ MIT
 
 :alien: Author
 ------
+Ricardo Carvalho - https://rabc.github.io/
 Phil Larson - http://dizm.com

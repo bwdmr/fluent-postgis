@@ -1,8 +1,8 @@
 import Foundation
-import PostgreSQL
+import FluentKit
 import WKCodable
 
-public struct GeometricPolygon2D: Codable, Equatable, CustomStringConvertible, PostgreSQLDataConvertible {
+public struct GeometricPolygon2D: Codable, Equatable, CustomStringConvertible {
     /// The points
     public let exteriorRing: GeometricLineString2D
     public let interiorRings: [GeometricLineString2D]
@@ -41,14 +41,6 @@ extension GeometricPolygon2D: GeometryConvertible, GeometryCollectable {
     }
 }
 
-extension GeometricPolygon2D: PostgreSQLDataTypeStaticRepresentable, ReflectionDecodable {
-
-    /// See `PostgreSQLDataTypeStaticRepresentable`.
-    public static var postgreSQLDataType: PostgreSQLDataType { return .geometricPolygon }
-
-    /// See `ReflectionDecodable`.
-    public static func reflectDecoded() throws -> (GeometricPolygon2D, GeometricPolygon2D) {
-        return (.init(exteriorRing: GeometricLineString2D(points: []), interiorRings: []),
-                .init(exteriorRing: GeometricLineString2D(points: [GeometricPoint2D(x: 0, y: 0)]), interiorRings: []))
-    }
+extension GeometricPolygon2D: PostGISDataType {
+    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geometricPolygon }
 }

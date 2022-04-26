@@ -1,57 +1,22 @@
-import FluentPostgreSQL
+import FluentSQL
+import WKCodable
 
-extension QueryBuilder where
-    Database: QuerySupporting,
-    Database.QueryFilter: SQLExpression,
-    Database.QueryField == Database.QueryFilter.ColumnIdentifier,
-    Database.QueryFilterMethod == Database.QueryFilter.BinaryOperator,
-    Database.QueryFilterValue == Database.QueryFilter
-{
+extension QueryBuilder {
     @discardableResult
-    public func filterGeometryDistance<T,V>(_ key: KeyPath<Result, T>, _ filter: V, _ method: Database.QueryFilterMethod, _ value: Double) -> Self
-        where T: GeometryConvertible, V: GeometryConvertible
+    public func filterGeometryDistance<F,V>(_ field: KeyPath<Model, F>, _ filter: V,
+                                            _ method: SQLBinaryOperator, _ value: Double) -> Self
+        where F: QueryableProperty, V: GeometryConvertible
     {
-        return filterGeometryDistance(Database.queryField(.keyPath(key)), Database.queryFilterValueGeometry(filter), method, Database.queryFilterValue([value]))
+        return queryFilterGeometryDistance(QueryBuilder.path(field), QueryBuilder.queryExpressionGeometry(filter),
+                                           method, SQLLiteral.numeric(String(value)))
     }
-    
-    @discardableResult
-    public func filterGeometryDistance<T>(_ key: KeyPath<Result, T>, _ filter: Database.QueryFilterValue, _ method: Database.QueryFilterMethod, _ value: Double) -> Self
-        where T: GeometryConvertible
-    {
-        return filterGeometryDistance(Database.queryField(.keyPath(key)), filter, method, Database.queryFilterValue([value]))
-    }
-
-    @discardableResult
-    public func filterGeometryDistance<A, T>(_ key: KeyPath<A, T>, _ filter: Database.QueryFilterValue, _ method: Database.QueryFilterMethod, _ value: Double) -> Self
-        where T: GeometryConvertible
-    {
-        return filterGeometryDistance(Database.queryField(.keyPath(key)), filter, method, Database.queryFilterValue([value]))
-    }
-    
-    @discardableResult
-    public func filterGeometryDistance(_ field: Database.QueryField, _ filter: Database.QueryFilterValue, _ method: Database.QueryFilterMethod, _ value: Double) -> Self
-    {
-        return filterGeometryDistance(field, filter, method, Database.queryFilterValue([value]))
-    }
-    
-    @discardableResult
-    private func filterGeometryDistance(_ field: Database.QueryField, _ filter: Database.QueryFilterValue, _ method: Database.QueryFilterMethod, _ value: Database.QueryFilterValue) -> Self {
-        return self.filter(custom: Database.queryFilterGeometryDistance(field, filter, method, value))
-    }
-
 }
 
-extension QuerySupporting where
-    QueryFilter: SQLExpression,
-    QueryField == QueryFilter.ColumnIdentifier,
-    QueryFilterMethod == QueryFilter.BinaryOperator,
-    QueryFilterValue == QueryFilter
-{
-    public static func queryFilterGeometryDistance(_ field: QueryField, _ filter: QueryFilterValue, _ method: QueryFilterMethod, _ value: QueryFilterValue) -> QueryFilter {
-        let args: [QueryFilter.Function.Argument] = [
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
-        ] as! [QueryFilter.Function.Argument]
-        return .binary(.function("ST_Distance", args), method, value)
+extension QueryBuilder {
+    public func queryFilterGeometryDistance(_ path: String, _ filter: SQLExpression,
+                                            _ method: SQLBinaryOperator, _ value: SQLExpression) -> Self {
+        query.filters.append(.sql(SQLFunction("ST_Distance", args: [SQLColumn(path), filter]),
+                                  method, value))
+        return self
     }
 }

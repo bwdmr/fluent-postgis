@@ -1,12 +1,7 @@
-import FluentPostgreSQL
+import FluentSQL
+import WKCodable
 
-extension QueryBuilder where
-    Database: QuerySupporting,
-    Database.QueryFilter: SQLExpression,
-    Database.QueryField == Database.QueryFilter.ColumnIdentifier,
-    Database.QueryFilterMethod == Database.QueryFilter.BinaryOperator,
-    Database.QueryFilterValue == Database.QueryFilter
-{
+extension QueryBuilder {
     /// Applies an ST_Equals filter to this query. Usually you will use the filter operators to do this.
     ///
     ///     let users = try User.query(on: conn)
@@ -18,45 +13,22 @@ extension QueryBuilder where
     ///     - value: Geometry value to filter by.
     /// - returns: Query builder for chaining.
     @discardableResult
-    public func filterGeometryEquals<T, V>(_ key: KeyPath<Result, T>, _ filter: V) -> Self
-        where T: GeometryConvertible, V: GeometryConvertible
+    public func filterGeometryEquals<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
+        where F: QueryableProperty, V: GeometryConvertible
     {
-        return filterGeometryEquals(Database.queryField(.keyPath(key)), Database.queryFilterValueGeometry(filter))
+        return queryGeometryEquals(QueryBuilder.path(field),
+                                   QueryBuilder.queryExpressionGeometry(value))
     }
-
-    /// Applies an ST_Equals filter to this query. Usually you will use the filter operators to do this.
-    ///
-    ///     let users = try User.query(on: conn)
-    ///         .filterGeometryDisjoint("area", path)
-    ///         .all()
-    ///
-    /// - parameters:
-    ///     - field: Name to a field on the model to filter.
-    ///     - value: Value to filter by.
-    /// - returns: Query builder for chaining.
-    @discardableResult
-    private func filterGeometryEquals(_ field: Database.QueryField, _ filter: Database.QueryFilterValue) -> Self {
-        return self.filter(custom: Database.queryGeometryEquals(field, filter))
-    }
-    
 }
 
-extension QuerySupporting where
-    QueryFilter: SQLExpression,
-    QueryField == QueryFilter.ColumnIdentifier,
-    QueryFilterMethod == QueryFilter.BinaryOperator,
-    QueryFilterValue == QueryFilter
-{
+extension QueryBuilder {
     /// Creates an instance of `QueryFilter` for ST_Equals from a field and value.
     ///
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public static func queryGeometryEquals(_ field: QueryField, _ filter: QueryFilterValue) -> QueryFilter {
-        let args: [QueryFilter.Function.Argument] = [
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(PostgreSQLExpression.column(field as! PostgreSQLColumnIdentifier)),
-            GenericSQLFunctionArgument<PostgreSQLExpression>.expression(filter as! PostgreSQLExpression),
-            ] as! [QueryFilter.Function.Argument]
-        return .function("ST_Equals", args)
+    public func queryGeometryEquals(_ path: String, _ value: SQLExpression) -> Self {
+        applyFilter(function: "ST_Equals", path: path, value: value)
+        return self
     }
 }

@@ -1,8 +1,8 @@
 import Foundation
-import PostgreSQL
+import FluentKit
 import WKCodable
 
-public struct GeometricPoint2D: Codable, Equatable, CustomStringConvertible, PostgreSQLDataConvertible {
+public struct GeometricPoint2D: Codable, Equatable, CustomStringConvertible {
     /// The point's x coordinate.
     public var x: Double
     
@@ -33,13 +33,6 @@ extension GeometricPoint2D: GeometryConvertible, GeometryCollectable {
     }
 }
 
-extension GeometricPoint2D: PostgreSQLDataTypeStaticRepresentable, ReflectionDecodable {
-    
-    /// See `PostgreSQLDataTypeStaticRepresentable`.
-    public static var postgreSQLDataType: PostgreSQLDataType { return .geometricPoint }
-    
-    /// See `ReflectionDecodable`.
-    public static func reflectDecoded() throws -> (GeometricPoint2D, GeometricPoint2D) {
-        return (.init(x: 0, y: 0), .init(x: 1, y: 1))
-    }
+extension GeometricPoint2D: PostGISDataType {
+    public static var dataType: DatabaseSchema.DataType { return PostGISDataTypeList.geometricPoint }
 }

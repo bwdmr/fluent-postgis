@@ -21,7 +21,7 @@ struct UserLocationMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema(UserLocation.schema)
             .field(.id, .int, .identifier(auto: true))
-            .field("location", GeometricPoint2D.dataType)
+            .field("location", .geometricPoint)
             .create()
     }
 
@@ -51,7 +51,7 @@ struct CityMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema(City.schema)
             .field(.id, .int, .identifier(auto: true))
-            .field("location", GeographicPoint2D.dataType)
+            .field("location", .geographicPoint)
             .create()
     }
 
@@ -80,7 +80,7 @@ struct UserPathMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema(UserPath.schema)
             .field(.id, .int, .identifier(auto: true))
-            .field("path", GeometricLineString2D.dataType)
+            .field("path", .geometricLineString)
             .create()
     }
 
@@ -109,7 +109,7 @@ struct UserAreaMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema(UserArea.schema)
             .field(.id, .int, .identifier(auto: true))
-            .field("area", GeometricPolygon2D.dataType)
+            .field("area", .geometricPolygon)
             .create()
     }
 
@@ -138,7 +138,7 @@ struct UserCollectionMigration: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema(UserCollection.schema)
             .field(.id, .int, .identifier(auto: true))
-            .field("collection", GeometricGeometryCollection2D.dataType)
+            .field("collection", .geometricGeometryCollection)
             .create()
     }
 

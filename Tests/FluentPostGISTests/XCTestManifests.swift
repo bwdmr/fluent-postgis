@@ -27,6 +27,8 @@ extension QueryTests {
         ("testTouchesReversed", testTouchesReversed),
         ("testWithin", testWithin),
         ("testWithinReversed", testWithinReversed),
+        ("testDistanceWithin", testDistanceWithin),
+        ("testSortByDistance", testSortByDistance),
     ]
 }
 

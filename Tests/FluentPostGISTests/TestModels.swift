@@ -1,7 +1,4 @@
-// Created on 05/05/2020
-
-import Foundation
-import FluentPostgresDriver
+import FluentKit
 @testable import FluentPostGIS
 
 final class UserLocation: Model {
@@ -22,6 +19,28 @@ struct UserLocationMigration: Migration {
     }
     func revert(on database: Database) -> EventLoopFuture<Void> {
         return database.schema(UserLocation.schema).delete()
+    }
+}
+
+/// A model for testing `GeographicPoint2D`-related functionality
+final class CityLocation: Model {
+    static let schema = "city_location"
+
+    @ID(custom: "id", generatedBy: .database)
+    var id: Int?
+    @Field(key: "location")
+    var location: GeographicPoint2D
+}
+
+struct CityLocationMigration: Migration {
+    func prepare(on database: Database) -> EventLoopFuture<Void> {
+        return database.schema(CityLocation.schema)
+            .field("id", .int, .identifier(auto: true))
+            .field("location", GeographicPoint2D.dataType)
+            .create()
+    }
+    func revert(on database: Database) -> EventLoopFuture<Void> {
+        return database.schema(CityLocation.schema).delete()
     }
 }
 

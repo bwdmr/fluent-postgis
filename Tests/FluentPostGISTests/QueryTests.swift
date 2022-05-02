@@ -1,39 +1,7 @@
 import XCTest
-import FluentKit
-import FluentBenchmark
-import FluentPostgresDriver
-import PostgresKit
-import Foundation
 @testable import FluentPostGIS
 
-final class QueryTests: XCTestCase {
-    var eventLoopGroup: EventLoopGroup!
-    var threadPool: NIOThreadPool!
-    var dbs: Databases!
-    var conn: Database {
-        self.dbs.database(
-            logger: .init(label: "lib.fluent.postgis"),
-            on: self.dbs.eventLoopGroup.next()
-        )!
-    }
-    var postgres: PostgresDatabase {
-        self.conn as! PostgresDatabase
-    }
-
-    override func setUp() {
-        let configuration = PostgresConfiguration(
-            hostname: "localhost",
-            username: "fluentpostgis",
-            password: "fluentpostgis",
-            database: "postgis_tests"
-        )
-
-        self.eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-        self.threadPool = NIOThreadPool(numberOfThreads: 1)
-        self.dbs = Databases(threadPool: threadPool, on: self.eventLoopGroup)
-        self.dbs.use(.postgres(configuration: configuration), as: .psql)
-    }
-    
+final class QueryTests: FluentPostGISTests {
     func testContains() throws {
         try UserAreaMigration().prepare(on: conn).wait()
         defer { try! UserAreaMigration().revert(on: conn).wait() }
@@ -278,7 +246,6 @@ final class QueryTests: XCTestCase {
     }
 
     func testOverlaps() throws {
-
         try UserPathMigration().prepare(on: conn).wait()
         defer { try! UserPathMigration().revert(on: conn).wait() }
 
@@ -422,5 +389,62 @@ final class QueryTests: XCTestCase {
 
         let all = try UserArea.query(on: conn).filterGeometryWithin(polygon2, \.$area).all().wait()
         XCTAssertEqual(all.count, 1)
+    }
+
+    func testDistanceWithin() throws {
+        try CityLocationMigration().prepare(on: conn).wait()
+        defer { try! CityLocationMigration().revert(on: conn).wait() }
+
+        let berlin = GeographicPoint2D(longitude: 13.41053, latitude: 52.52437)
+
+        // 255 km from Berlin
+        let hamburg = CityLocation()
+        hamburg.location = GeographicPoint2D(longitude: 10.01534, latitude: 53.57532)
+        try hamburg.save(on: conn).wait()
+
+        // 505 km from Berlin
+        let munich = CityLocation()
+        munich.location = GeographicPoint2D(longitude: 11.57549, latitude: 48.13743)
+        try munich.save(on: conn).wait()
+
+        // 27 km from Berlin
+        let potsdam = CityLocation()
+        potsdam.location = GeographicPoint2D(longitude: 13.06566, latitude: 52.39886)
+        try potsdam.save(on: conn).wait()
+
+        let all = try CityLocation.query(on: conn)
+            .filterGeographyDistanceWithin(\.$location, berlin, 30 * 1_000)
+            .all()
+            .wait()
+
+        XCTAssertEqual(all.map(\.id), [potsdam].map(\.id))
+    }
+
+    func testSortByDistance() throws {
+        try CityLocationMigration().prepare(on: conn).wait()
+        defer { try! CityLocationMigration().revert(on: conn).wait() }
+
+        let berlin = GeographicPoint2D(longitude: 13.41053, latitude: 52.52437)
+
+        // 255 km from Berlin
+        let hamburg = CityLocation()
+        hamburg.location = GeographicPoint2D(longitude: 10.01534, latitude: 53.57532)
+        try hamburg.save(on: conn).wait()
+
+        // 505 km from Berlin
+        let munich = CityLocation()
+        munich.location = GeographicPoint2D(longitude: 11.57549, latitude: 48.13743)
+        try munich.save(on: conn).wait()
+
+        // 27 km from Berlin
+        let potsdam = CityLocation()
+        potsdam.location = GeographicPoint2D(longitude: 13.06566, latitude: 52.39886)
+        try potsdam.save(on: conn).wait()
+
+        let all = try CityLocation.query(on: conn)
+            .sortByDistance(between: \.$location, berlin)
+            .all()
+            .wait()
+        XCTAssertEqual(all.map(\.id), [potsdam, hamburg, munich].map(\.id))
     }
 }

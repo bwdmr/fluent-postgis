@@ -1,8 +1,8 @@
-//import XCTest
+// import XCTest
 //
-//import FluentPostGISTests
+// import FluentPostGISTests
 //
-//var tests = [XCTestCaseEntry]()
-//tests += FluentPostGISTests.__allTests()
+// var tests = [XCTestCaseEntry]()
+// tests += FluentPostGISTests.__allTests()
 //
-//XCTMain(tests)
+// XCTMain(tests)

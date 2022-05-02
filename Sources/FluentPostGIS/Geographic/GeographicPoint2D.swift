@@ -1,14 +1,13 @@
-import Foundation
 import FluentKit
 import WKCodable
 
 public struct GeographicPoint2D: Codable, Equatable, CustomStringConvertible {
     /// The point's x coordinate.
     public var longitude: Double
-    
+
     /// The point's y coordinate.
     public var latitude: Double
-    
+
     /// Create a new `GISGeographicPoint2D`
     public init(longitude: Double, latitude: Double) {
         self.longitude = longitude
@@ -23,13 +22,13 @@ extension GeographicPoint2D: GeometryConvertible, GeometryCollectable {
     public init(geometry point: GeometryType) {
         self.init(longitude: point.x, latitude: point.y)
     }
-    
+
     public var geometry: GeometryType {
-        return .init(vector: [self.longitude, self.latitude], srid: FluentPostGISSrid)
+        .init(vector: [self.longitude, self.latitude], srid: FluentPostGISSrid)
     }
-    
+
     public var baseGeometry: Geometry {
-        return self.geometry
+        self.geometry
     }
 }
 

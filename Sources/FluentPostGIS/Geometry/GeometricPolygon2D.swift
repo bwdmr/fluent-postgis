@@ -1,4 +1,3 @@
-import Foundation
 import FluentKit
 import WKCodable
 
@@ -6,7 +5,7 @@ public struct GeometricPolygon2D: Codable, Equatable, CustomStringConvertible {
     /// The points
     public let exteriorRing: GeometricLineString2D
     public let interiorRings: [GeometricLineString2D]
-    
+
     public init(exteriorRing: GeometricLineString2D) {
         self.init(exteriorRing: exteriorRing, interiorRings: [])
     }
@@ -29,13 +28,17 @@ extension GeometricPolygon2D: GeometryConvertible, GeometryCollectable {
     }
 
     public var geometry: GeometryType {
-        let exteriorRing = self.exteriorRing.geometry
-        let interiorRings = self.interiorRings.map { $0.geometry }
-        return .init(exteriorRing: exteriorRing, interiorRings: interiorRings, srid: FluentPostGISSrid)
+        let exteriorRing = exteriorRing.geometry
+        let interiorRings = interiorRings.map(\.geometry)
+        return .init(
+            exteriorRing: exteriorRing,
+            interiorRings: interiorRings,
+            srid: FluentPostGISSrid
+        )
     }
-    
+
     public var baseGeometry: Geometry {
-        return self.geometry
+        self.geometry
     }
 }
 

@@ -1,6 +1,6 @@
-import WKCodable
 import FluentKit
 import Foundation
+import WKCodable
 
 public protocol GeometryCollectable {
     var baseGeometry: Geometry { get }
@@ -22,7 +22,7 @@ extension GeometryCollectable where Self: Equatable {
 
 extension GeometryConvertible where Self: CustomStringConvertible {
     public var description: String {
-        return WKTEncoder().encode(geometry)
+        WKTEncoder().encode(geometry)
     }
 }
 

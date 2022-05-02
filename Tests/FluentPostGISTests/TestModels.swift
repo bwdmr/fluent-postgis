@@ -10,7 +10,7 @@ final class UserLocation: Model {
     @Field(key: "location")
     var location: GeometricPoint2D
 
-    init() { }
+    init() {}
 
     init(location: GeometricPoint2D) {
         self.location = location
@@ -40,7 +40,7 @@ final class City: Model {
     @Field(key: "location")
     var location: GeographicPoint2D
 
-    init() { }
+    init() {}
 
     init(location: GeographicPoint2D) {
         self.location = location
@@ -69,7 +69,7 @@ final class UserPath: Model {
     @Field(key: "path")
     var path: GeometricLineString2D
 
-    init() { }
+    init() {}
 
     init(path: GeometricLineString2D) {
         self.path = path
@@ -98,7 +98,7 @@ final class UserArea: Model {
     @Field(key: "area")
     var area: GeometricPolygon2D
 
-    init() { }
+    init() {}
 
     init(area: GeometricPolygon2D) {
         self.area = area
@@ -127,7 +127,7 @@ final class UserCollection: Model {
     @Field(key: "collection")
     var collection: GeometricGeometryCollection2D
 
-    init() { }
+    init() {}
 
     init(collection: GeometricGeometryCollection2D) {
         self.collection = collection

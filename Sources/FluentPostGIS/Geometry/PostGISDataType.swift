@@ -5,7 +5,7 @@ public protocol PostGISDataType {
     static var dataType: DatabaseSchema.DataType { get }
 }
 
-public struct PostGISDataTypeList {
+public enum PostGISDataTypeList {
     static var geometricPoint: DatabaseSchema.DataType {
         .custom(SQLRaw("geometry(Point, \(FluentPostGISSrid))"))
     }
@@ -63,14 +63,16 @@ public struct PostGISDataTypeList {
     }
 }
 
-public extension SchemaBuilder {
-    func field(
+extension SchemaBuilder {
+    public func field(
         _ name: String,
         _ type: PostGISDataType.Type,
         _ constraints: DatabaseSchema.FieldConstraint...
     ) -> Self {
-        self.field(.definition(name: .key(.string(name)),
-                               dataType: type.dataType,
-                               constraints: constraints))
+        self.field(.definition(
+            name: .key(.string(name)),
+            dataType: type.dataType,
+            constraints: constraints
+        ))
     }
 }

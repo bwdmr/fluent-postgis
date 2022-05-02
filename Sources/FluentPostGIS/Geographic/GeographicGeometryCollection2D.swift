@@ -1,8 +1,7 @@
-import Foundation
 import FluentKit
 import WKCodable
 
-public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible  {
+public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible {
     /// The points
     public let geometries: [GeometryCollectable]
 
@@ -15,9 +14,9 @@ public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringCo
 extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectable {
     /// Convertible type
     public typealias GeometryType = GeometryCollection
-    
+
     public init(geometry: GeometryCollection) {
-        geometries = geometry.geometries.map {
+        self.geometries = geometry.geometries.map {
             if let value = $0 as? Point {
                 return GeographicPoint2D(geometry: value)
             } else if let value = $0 as? LineString {
@@ -38,34 +37,37 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
             }
         }
     }
-    
+
     public var geometry: GeometryCollection {
-        let geometries = self.geometries.map { $0.baseGeometry }
+        let geometries = geometries.map(\.baseGeometry)
         return .init(geometries: geometries, srid: FluentPostGISSrid)
     }
-    
+
     public var baseGeometry: Geometry {
-        return self.geometry
+        self.geometry
     }
-    
+
     public init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         let wkbGeometry: GeometryCollection = try WKTDecoder().decode(from: value)
         self.init(geometry: wkbGeometry)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         let wktEncoder = WKTEncoder()
-        let value = wktEncoder.encode(geometry)
+        let value = wktEncoder.encode(self.geometry)
         var container = encoder.singleValueContainer()
         try container.encode(value)
     }
-    
-    public static func == (lhs: GeographicGeometryCollection2D, rhs: GeographicGeometryCollection2D) -> Bool {
+
+    public static func == (
+        lhs: GeographicGeometryCollection2D,
+        rhs: GeographicGeometryCollection2D
+    ) -> Bool {
         guard lhs.geometries.count == rhs.geometries.count else {
             return false
         }
-        for i in 0..<lhs.geometries.count {
+        for i in 0 ..< lhs.geometries.count {
             guard lhs.geometries[i].isEqual(to: rhs.geometries[i]) else {
                 return false
             }
@@ -75,5 +77,6 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
 }
 
 extension GeographicGeometryCollection2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geographicGeometryCollection }
+    public static var dataType: DatabaseSchema
+        .DataType { PostGISDataTypeList.geographicGeometryCollection }
 }

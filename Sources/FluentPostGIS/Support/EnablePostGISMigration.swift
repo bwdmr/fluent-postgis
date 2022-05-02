@@ -1,10 +1,9 @@
 import FluentKit
-import Foundation
 import SQLKit
 
 public struct EnablePostGISMigration: AsyncMigration {
     public init() {}
-    
+
     public enum EnablePostGISMigrationError: Error {
         case notSqlDatabase
     }

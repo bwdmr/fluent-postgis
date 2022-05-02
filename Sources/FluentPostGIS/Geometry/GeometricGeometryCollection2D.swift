@@ -1,23 +1,21 @@
-import Foundation
 import FluentKit
 import WKCodable
 
 public struct GeometricGeometryCollection2D: Codable, Equatable, CustomStringConvertible {
     /// The points
     public let geometries: [GeometryCollectable]
-    
+
     /// Create a new `GISGeometricGeometryCollection2D`
     public init(geometries: [GeometryCollectable]) {
         self.geometries = geometries
-    }    
+    }
 }
 
 extension GeometricGeometryCollection2D: GeometryConvertible, GeometryCollectable {
-    
-    public typealias GeometryType = GeometryCollection    
-    
+    public typealias GeometryType = GeometryCollection
+
     public init(geometry: GeometryType) {
-        geometries = geometry.geometries.map {
+        self.geometries = geometry.geometries.map {
             if let value = $0 as? Point {
                 return GeometricPoint2D(geometry: value)
             } else if let value = $0 as? LineString {
@@ -38,21 +36,24 @@ extension GeometricGeometryCollection2D: GeometryConvertible, GeometryCollectabl
             }
         }
     }
-    
+
     public var geometry: GeometryType {
-        let geometries = self.geometries.map { $0.baseGeometry }
+        let geometries = geometries.map(\.baseGeometry)
         return .init(geometries: geometries, srid: FluentPostGISSrid)
     }
-    
+
     public var baseGeometry: Geometry {
-        return self.geometry
+        self.geometry
     }
-    
-    public static func == (lhs: GeometricGeometryCollection2D, rhs: GeometricGeometryCollection2D) -> Bool {
+
+    public static func == (
+        lhs: GeometricGeometryCollection2D,
+        rhs: GeometricGeometryCollection2D
+    ) -> Bool {
         guard lhs.geometries.count == rhs.geometries.count else {
             return false
         }
-        for i in 0..<lhs.geometries.count {
+        for i in 0 ..< lhs.geometries.count {
             guard lhs.geometries[i].isEqual(to: rhs.geometries[i]) else {
                 return false
             }
@@ -62,5 +63,6 @@ extension GeometricGeometryCollection2D: GeometryConvertible, GeometryCollectabl
 }
 
 extension GeometricGeometryCollection2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geometricGeometryCollection }
+    public static var dataType: DatabaseSchema
+        .DataType { PostGISDataTypeList.geometricGeometryCollection }
 }

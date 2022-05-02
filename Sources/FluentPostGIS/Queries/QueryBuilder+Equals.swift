@@ -14,10 +14,12 @@ extension QueryBuilder {
     /// - returns: Query builder for chaining.
     @discardableResult
     public func filterGeometryEquals<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
-    where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
+        where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        return queryGeometryEquals(QueryBuilder.path(field),
-                                   QueryBuilder.queryExpressionGeometry(value))
+        self.queryGeometryEquals(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
     }
 }
 
@@ -28,7 +30,7 @@ extension QueryBuilder {
     ///     - field: Field to filter.
     ///     - value: Value type.
     public func queryGeometryEquals(_ path: String, _ value: SQLExpression) -> Self {
-        applyFilter(function: "ST_Equals", path: path, value: value)
+        self.applyFilter(function: "ST_Equals", path: path, value: value)
         return self
     }
 }

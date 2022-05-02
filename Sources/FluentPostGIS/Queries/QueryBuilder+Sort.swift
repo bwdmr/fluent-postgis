@@ -14,15 +14,18 @@ extension QueryBuilder {
     /// - returns: Query builder for chaining.
     @discardableResult
     public func sortByDistance<F, V>(between field: KeyPath<Model, F>, _ value: V) -> Self
-    where F: QueryableProperty, F.Model == Model, V: GeometryConvertible {
-        return querySortByDistance(QueryBuilder.path(field),
-                                   QueryBuilder.queryExpressionGeometry(value))
+        where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
+    {
+        self.querySortByDistance(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
     }
 }
 
 extension QueryBuilder {
     public func querySortByDistance(_ path: String, _ filter: SQLExpression) -> Self {
-        applySort(function: "ST_Distance", args: [SQLColumn(path), filter])
+        self.applySort(function: "ST_Distance", args: [SQLColumn(path), filter])
         return self
     }
 }

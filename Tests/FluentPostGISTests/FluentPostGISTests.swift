@@ -13,6 +13,7 @@ class FluentPostGISTests: XCTestCase {
             on: self.dbs.eventLoopGroup.next()
         )!
     }
+
     var postgres: PostgresDatabase {
         self.db as! PostgresDatabase
     }
@@ -27,7 +28,7 @@ class FluentPostGISTests: XCTestCase {
 
         self.eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         self.threadPool = NIOThreadPool(numberOfThreads: 1)
-        self.dbs = Databases(threadPool: threadPool, on: self.eventLoopGroup)
+        self.dbs = Databases(threadPool: self.threadPool, on: self.eventLoopGroup)
         self.dbs.use(.postgres(configuration: configuration), as: .psql)
     }
 }

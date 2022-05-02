@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "fluent-postgis",
     platforms: [
-       .macOS(.v12)
+        .macOS(.v12),
     ],
     products: [
         // FluentPostgreSQL support for PostGIS

@@ -16,10 +16,12 @@ extension QueryBuilder {
     public func filterGeometryWithin<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        return queryGeometryWithin(QueryBuilder.path(field),
-                                   QueryBuilder.queryExpressionGeometry(value))
+        self.queryGeometryWithin(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
     }
-    
+
     /// Applies an ST_Within filter to this query. Usually you will use the filter operators to do this.
     ///
     ///     let users = try User.query(on: conn)
@@ -32,10 +34,12 @@ extension QueryBuilder {
     /// - returns: Query builder for chaining.
     @discardableResult
     public func filterGeometryWithin<F, V>(_ value: V, _ field: KeyPath<Model, F>) -> Self
-    where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
+        where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        return queryGeometryWithin(QueryBuilder.queryExpressionGeometry(value),
-        QueryBuilder.path(field))
+        self.queryGeometryWithin(
+            QueryBuilder.queryExpressionGeometry(value),
+            QueryBuilder.path(field)
+        )
     }
 }
 
@@ -46,17 +50,17 @@ extension QueryBuilder {
     ///     - field: Field to filter.
     ///     - value: Value type.
     public func queryGeometryWithin(_ path: String, _ value: SQLExpression) -> Self {
-        applyFilter(function: "ST_Within", path: path, value: value)
+        self.applyFilter(function: "ST_Within", path: path, value: value)
         return self
     }
-    
+
     /// Creates an instance of `QueryFilter` for ST_Within from a field and value.
     ///
     /// - parameters:
     ///     - value: Value type.
     ///     - field: Field to filter.
     public func queryGeometryWithin(_ value: SQLExpression, _ path: String) -> Self {
-        applyFilter(function: "ST_Within", value: value, path: path)
+        self.applyFilter(function: "ST_Within", value: value, path: path)
         return self
     }
 }

@@ -1,14 +1,13 @@
-import Foundation
 import FluentKit
 import WKCodable
 
 public struct GeometricPoint2D: Codable, Equatable, CustomStringConvertible {
     /// The point's x coordinate.
     public var x: Double
-    
+
     /// The point's y coordinate.
     public var y: Double
-    
+
     /// Create a new `GISGeometricPoint2D`
     public init(x: Double, y: Double) {
         self.x = x
@@ -23,13 +22,13 @@ extension GeometricPoint2D: GeometryConvertible, GeometryCollectable {
     public init(geometry point: GeometryType) {
         self.init(x: point.x, y: point.y)
     }
-    
+
     public var geometry: GeometryType {
-        return .init(vector: [self.x, self.y], srid: FluentPostGISSrid)
+        .init(vector: [self.x, self.y], srid: FluentPostGISSrid)
     }
-    
+
     public var baseGeometry: Geometry {
-        return self.geometry
+        self.geometry
     }
 }
 

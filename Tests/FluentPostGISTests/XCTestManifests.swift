@@ -1,15 +1,15 @@
-//import XCTest
+// import XCTest
 //
-//extension GeometryTests {
+// extension GeometryTests {
 //    static let __allTests = [
 //        ("testGeometryCollection", testGeometryCollection),
 //        ("testLineString", testLineString),
 //        ("testPoint", testPoint),
 //        ("testPolygon", testPolygon),
 //    ]
-//}
+// }
 //
-//extension QueryTests {
+// extension QueryTests {
 //    static let __allTests = [
 //        ("testContains", testContains),
 //        ("testContainsReversed", testContainsReversed),
@@ -30,13 +30,13 @@
 //        ("testDistanceWithin", testDistanceWithin),
 //        ("testSortByDistance", testSortByDistance),
 //    ]
-//}
+// }
 //
-//#if !os(macOS)
-//public func __allTests() -> [XCTestCaseEntry] {
+// #if !os(macOS)
+// public func __allTests() -> [XCTestCaseEntry] {
 //    return [
 //        testCase(GeometryTests.__allTests),
 //        testCase(QueryTests.__allTests),
 //    ]
-//}
-//#endif
+// }
+// #endif

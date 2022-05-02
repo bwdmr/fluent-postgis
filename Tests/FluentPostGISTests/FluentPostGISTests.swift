@@ -1,4 +1,5 @@
 import FluentKit
+import FluentPostgresDriver
 import PostgresKit
 import XCTest
 
@@ -6,14 +7,14 @@ class FluentPostGISTests: XCTestCase {
     var eventLoopGroup: EventLoopGroup!
     var threadPool: NIOThreadPool!
     var dbs: Databases!
-    var conn: Database {
+    var db: Database {
         self.dbs.database(
             logger: .init(label: "lib.fluent.postgis"),
             on: self.dbs.eventLoopGroup.next()
         )!
     }
     var postgres: PostgresDatabase {
-        self.conn as! PostgresDatabase
+        self.db as! PostgresDatabase
     }
 
     override func setUp() {

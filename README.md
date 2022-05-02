@@ -3,35 +3,50 @@
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20OS%20X-blue.svg)
 ![Package Managers](https://img.shields.io/badge/package%20managers-SwiftPM-yellow.svg)
 
-PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor)
+A fork of the [FluentPostGIS](https://github.com/plarson/fluent-postgis) package which adds geographic support. FluentPostGIS provides PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor).
 
 # Installation
 
 ## Swift Package Manager
 
+Add this line to your dependencies in `Package.swift`:
+
 ```swift
-.package(url: "https://github.com/rabc/fluent-postgis.git", .branch("vapor_4"))
+.package(url: "https://github.com/brokenhandsio/fluent-postgis.git", from: "0.3.0")
 ```
+
+Then add this line to a target's dependencies:
+
+```swift
+.product(name: "FluentPostGIS", package: "fluent-postgis"),
+```
+
 # Setup
+
 Import module
+
 ```swift
 import FluentPostGIS
 ```
 
 Optionally, you can add a `Migration` to enable PostGIS:
+
 ```swift
 app.migrations.add(EnablePostGISMigration())
 
 ```
 
 # Models
+
 Add a type to your model
+
 ```swift
 final class UserLocation: Model {
     static let schema = "user_location"
     
-    @ID(custom: "id", generatedBy: .database)
-    var id: Int?
+    @ID(key: .id)
+    var id: UUID?
+
     @Field(key: "location")
     var location: GeometricPoint2D
 }
@@ -40,15 +55,15 @@ final class UserLocation: Model {
 Then use its data type in the `Migration`:
 
 ```swift
-struct UserLocationMigration: Migration {
-    func prepare(on database: Database) -> EventLoopFuture<Void> {
-        return database.schema(UserLocation.schema)
-            .field("id", .int, .identifier(auto: true))
+struct UserLocationMigration: AsyncMigration {
+    func prepare(on database: Database) async throws -> {
+        try await database.schema(UserLocation.schema)
+            .id()
             .field("location", GeometricPoint2D.dataType)
             .create()
     }
-    func revert(on database: Database) -> EventLoopFuture<Void> {
-        return database.schema(UserLocation.schema).delete()
+    func revert(on database: Database) async throws -> {
+        try await database.schema(UserLocation.schema).delete()
     }
 }
 ```
@@ -64,10 +79,14 @@ struct UserLocationMigration: Migration {
 |GeometricGeometryCollection2D|GeographicGeometryCollection2D|
 
 # Queries
+
 Query using any of the filter functions:
-```swift        
-let searchLocation = GeometricPoint2D(x: 1, y: 2)
-try UserLocation.query(on: conn).filterGeometryDistanceWithin(\.$location, user.location, 1000).all().wait()
+
+```swift
+let eiffelTower = GeographicPoint2D(longitude: 2.2945, latitude: 48.858222)
+try await UserLocation.query(on: database)
+    .filterGeographyDistanceWithin(\.$location, eiffelTower, 1000)
+    .all()
 ```
 
 | Queries |
@@ -77,6 +96,7 @@ try UserLocation.query(on: conn).filterGeometryDistanceWithin(\.$location, user.
 |filterGeometryDisjoint|
 |filterGeometryDistance|
 |filterGeometryDistanceWithin|
+|filterGeographyDistanceWithin|
 |filterGeometryEquals|
 |filterGeometryIntersects|
 |filterGeometryOverlaps|

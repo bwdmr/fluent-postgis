@@ -2,25 +2,25 @@ import FluentKit
 import Foundation
 import SQLKit
 
-public struct EnablePostGISMigration: Migration {
+public struct EnablePostGISMigration: AsyncMigration {
     public init() {}
     
-    enum EnablePostGISMigrationError: Error {
+    public enum EnablePostGISMigrationError: Error {
         case notSqlDatabase
     }
 
-    public func prepare(on database: Database) -> EventLoopFuture<Void> {
+    public func prepare(on database: Database) async throws {
         guard let db = database as? SQLDatabase else {
-            return database.eventLoop.makeFailedFuture(EnablePostGISMigrationError.notSqlDatabase)
+            throw EnablePostGISMigrationError.notSqlDatabase
         }
-        return db.raw("CREATE EXTENSION IF NOT EXISTS \"postgis\"").run()
+        try await db.raw("CREATE EXTENSION IF NOT EXISTS \"postgis\"").run()
     }
 
-    public func revert(on database: Database) -> EventLoopFuture<Void> {
+    public func revert(on database: Database) async throws {
         guard let db = database as? SQLDatabase else {
-            return database.eventLoop.makeFailedFuture(EnablePostGISMigrationError.notSqlDatabase)
+            throw EnablePostGISMigrationError.notSqlDatabase
         }
-        return db.raw("DROP EXTENSION IF EXISTS \"postgis\"").run()
+        try await db.raw("DROP EXTENSION IF EXISTS \"postgis\"").run()
     }
 }
 

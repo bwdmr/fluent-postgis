@@ -3,7 +3,7 @@
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20OS%20X-blue.svg)
 ![Package Managers](https://img.shields.io/badge/package%20managers-SwiftPM-yellow.svg)
 
-A fork of the [FluentPostGIS](https://github.com/plarson/fluent-postgis) package which adds geographic support. FluentPostGIS provides PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor).
+A fork of the [FluentPostGIS](https://github.com/plarson/fluent-postgis) package which adds support for geographic queries. FluentPostGIS provides PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor).
 
 # Installation
 
@@ -41,8 +41,8 @@ app.migrations.add(EnablePostGISMigration())
 Add a type to your model
 
 ```swift
-final class UserLocation: Model {
-    static let schema = "user_location"
+final class User: Model {
+    static let schema = "user"
     
     @ID(key: .id)
     var id: UUID?
@@ -55,15 +55,15 @@ final class UserLocation: Model {
 Then use its data type in the `Migration`:
 
 ```swift
-struct UserLocationMigration: AsyncMigration {
+struct UserMigration: AsyncMigration {
     func prepare(on database: Database) async throws -> {
-        try await database.schema(UserLocation.schema)
+        try await database.schema(User.schema)
             .id()
             .field("location", GeometricPoint2D.dataType)
             .create()
     }
     func revert(on database: Database) async throws -> {
-        try await database.schema(UserLocation.schema).delete()
+        try await database.schema(User.schema).delete()
     }
 }
 ```
@@ -84,7 +84,7 @@ Query using any of the filter functions:
 
 ```swift
 let eiffelTower = GeographicPoint2D(longitude: 2.2945, latitude: 48.858222)
-try await UserLocation.query(on: database)
+try await User.query(on: database)
     .filterGeographyDistanceWithin(\.$location, eiffelTower, 1000)
     .all()
 ```

@@ -1,11 +1,8 @@
 @testable import FluentPostGIS
 import XCTest
 
-final class GeometryTests: FluentPostGISTests {
+final class GeometryTests: FluentPostGISTestCase {
     func testPoint() async throws {
-        try await UserLocationMigration().prepare(on: self.db)
-        defer { try! UserLocationMigration().revert(on: self.db).wait() }
-
         let point = GeometricPoint2D(x: 1, y: 2)
 
         let user = UserLocation(location: point)
@@ -21,9 +18,6 @@ final class GeometryTests: FluentPostGISTests {
     }
 
     func testLineString() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let point = GeometricPoint2D(x: 1, y: 2)
         let point2 = GeometricPoint2D(x: 2, y: 3)
         let point3 = GeometricPoint2D(x: 3, y: 2)
@@ -37,9 +31,6 @@ final class GeometryTests: FluentPostGISTests {
     }
 
     func testPolygon() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let point = GeometricPoint2D(x: 1, y: 2)
         let point2 = GeometricPoint2D(x: 2, y: 3)
         let point3 = GeometricPoint2D(x: 3, y: 2)
@@ -57,9 +48,6 @@ final class GeometryTests: FluentPostGISTests {
     }
 
     func testGeometryCollection() async throws {
-        try await UserCollectionMigration().prepare(on: self.db)
-        defer { try! UserCollectionMigration().revert(on: self.db).wait() }
-
         let point = GeometricPoint2D(x: 1, y: 2)
         let point2 = GeometricPoint2D(x: 2, y: 3)
         let point3 = GeometricPoint2D(x: 3, y: 2)

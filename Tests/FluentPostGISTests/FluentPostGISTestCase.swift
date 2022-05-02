@@ -3,7 +3,7 @@ import FluentPostgresDriver
 import PostgresKit
 import XCTest
 
-class FluentPostGISTests: XCTestCase {
+class FluentPostGISTestCase: XCTestCase {
     var dbs: Databases!
     var db: Database {
         self.dbs.database(
@@ -12,7 +12,7 @@ class FluentPostGISTests: XCTestCase {
         )!
     }
 
-    override func setUp() {
+    override func setUp() async throws {
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let threadPool = NIOThreadPool(numberOfThreads: 1)
         self.dbs = Databases(threadPool: threadPool, on: eventLoopGroup)
@@ -23,5 +23,23 @@ class FluentPostGISTests: XCTestCase {
             database: "postgis_tests"
         )
         self.dbs.use(.postgres(configuration: configuration), as: .psql)
+
+        for migration in self.migrations {
+            try await migration.prepare(on: self.db)
+        }
     }
+
+    override func tearDown() async throws {
+        for migration in self.migrations {
+            try await migration.revert(on: self.db)
+        }
+    }
+
+    private let migrations: [AsyncMigration] = [
+        UserLocationMigration(),
+        CityMigration(),
+        UserPathMigration(),
+        UserAreaMigration(),
+        UserCollectionMigration(),
+    ]
 }

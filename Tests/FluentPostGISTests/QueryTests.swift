@@ -1,11 +1,8 @@
 @testable import FluentPostGIS
 import XCTest
 
-final class QueryTests: FluentPostGISTests {
+final class QueryTests: FluentPostGISTestCase {
     func testContains() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -26,9 +23,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testContainsReversed() async throws {
-        try await UserLocationMigration().prepare(on: self.db)
-        defer { try! UserLocationMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -49,9 +43,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testContainsWithHole() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -85,9 +76,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testCrosses() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -112,9 +100,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testCrossesReversed() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -139,9 +124,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testDisjoint() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -166,9 +148,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testDisjointReversed() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -193,9 +172,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testEquals() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -215,9 +191,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testIntersects() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -242,9 +215,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testIntersectsReversed() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -269,9 +239,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testOverlaps() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let testPath = GeometricLineString2D(points: [
             GeometricPoint2D(x: 15, y: 0),
             GeometricPoint2D(x: 5, y: 5),
@@ -296,9 +263,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testOverlapsReversed() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let testPath = GeometricLineString2D(points: [
             GeometricPoint2D(x: 15, y: 0),
             GeometricPoint2D(x: 5, y: 5),
@@ -323,9 +287,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testTouches() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let testPath = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 1, y: 1),
@@ -344,9 +305,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testTouchesReversed() async throws {
-        try await UserPathMigration().prepare(on: self.db)
-        defer { try! UserPathMigration().revert(on: self.db).wait() }
-
         let testPath = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 1, y: 1),
@@ -365,9 +323,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testWithin() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -395,9 +350,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testWithinReversed() async throws {
-        try await UserAreaMigration().prepare(on: self.db)
-        defer { try! UserAreaMigration().revert(on: self.db).wait() }
-
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),
             GeometricPoint2D(x: 10, y: 0),
@@ -425,9 +377,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testDistanceWithin() async throws {
-        try await CityMigration().prepare(on: self.db)
-        defer { try! CityMigration().revert(on: self.db).wait() }
-
         let berlin = GeographicPoint2D(longitude: 13.41053, latitude: 52.52437)
 
         // 255 km from Berlin
@@ -450,9 +399,6 @@ final class QueryTests: FluentPostGISTests {
     }
 
     func testSortByDistance() async throws {
-        try await CityMigration().prepare(on: self.db)
-        defer { try! CityMigration().revert(on: self.db).wait() }
-
         let berlin = GeographicPoint2D(longitude: 13.41053, latitude: 52.52437)
 
         // 255 km from Berlin

@@ -1,30 +1,37 @@
-// swift-tools-version:4.1
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
-    name: "FluentPostGIS",
+    name: "fluent-postgis",
+    platforms: [
+        .macOS(.v12),
+    ],
     products: [
-        // FluentPostgreSQL support for PostGIS
         .library(
             name: "FluentPostGIS",
-            targets: ["FluentPostGIS"]),
+            targets: ["FluentPostGIS"]
+        ),
     ],
     dependencies: [
-        // Swift ORM framework (queries, models, and relations) for building NoSQL and SQL database integrations.
-        .package(url: "https://github.com/vapor/fluent.git", from: "3.0.0"),
-
-        // 🐘 Non-blocking, event-driven Swift client for PostgreSQL.
-        .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0"),
-
-        // Well Known Binary Encoding and Decoding
-        .package(url: "https://github.com/plarson/WKCodable", from: "0.1.1"),
+        .package(url: "https://github.com/vapor/fluent-kit.git", from: "1.0.0"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
+        .package(url: "https://github.com/rabc/WKCodable.git", from: "0.1.0"),
     ],
     targets: [
         .target(
             name: "FluentPostGIS",
-            dependencies: ["FluentPostgreSQL", "WKCodable"]),
+            dependencies: [
+                .product(name: "FluentKit", package: "fluent-kit"),
+                .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+                .product(name: "WKCodable", package: "WKCodable"),
+            ]
+        ),
         .testTarget(
             name: "FluentPostGISTests",
-            dependencies: ["FluentBenchmark", "FluentPostGIS"]),
+            dependencies: [
+                .target(name: "FluentPostGIS"),
+                .product(name: "FluentBenchmark", package: "fluent-kit"),
+            ]
+        ),
     ]
 )

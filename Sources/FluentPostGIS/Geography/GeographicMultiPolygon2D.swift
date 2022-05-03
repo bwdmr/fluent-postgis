@@ -1,22 +1,22 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricMultiPolygon2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicMultiPolygon2D: Codable, Equatable, CustomStringConvertible {
     /// The points
-    public let polygons: [GeometricPolygon2D]
+    public let polygons: [GeographicPolygon2D]
 
-    /// Create a new `GISGeometricMultiPolygon2D`
-    public init(polygons: [GeometricPolygon2D]) {
+    /// Create a new `GISGeographicMultiPolygon2D`
+    public init(polygons: [GeographicPolygon2D]) {
         self.polygons = polygons
     }
 }
 
-extension GeometricMultiPolygon2D: GeometryConvertible, GeometryCollectable {
+extension GeographicMultiPolygon2D: GeometryConvertible, GeometryCollectable {
     /// Convertible type
     public typealias GeometryType = MultiPolygon
 
     public init(geometry polygon: GeometryType) {
-        let polygons = polygon.polygons.map { GeometricPolygon2D(geometry: $0) }
+        let polygons = polygon.polygons.map { GeographicPolygon2D(geometry: $0) }
         self.init(polygons: polygons)
     }
 

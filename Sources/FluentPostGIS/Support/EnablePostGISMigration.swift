@@ -1,14 +1,26 @@
-import Foundation
-import FluentPostgreSQL
+import FluentKit
+import SQLKit
 
-public struct EnablePostGISMigration: Migration {
-    public typealias Database = PostgreSQLDatabase
+public struct EnablePostGISMigration: AsyncMigration {
+    public init() {}
 
-    public static func prepare(on conn: PostgreSQLConnection) -> Future<Void> {
-        return conn.raw("CREATE EXTENSION IF NOT EXISTS \"postgis\"").run()
+    public enum EnablePostGISMigrationError: Error {
+        case notSqlDatabase
     }
 
-    public static func revert(on conn: PostgreSQLConnection) -> Future<Void> {
-        return conn.raw("DROP EXTENSION IF EXISTS \"postgis\"").run()
+    public func prepare(on database: Database) async throws {
+        guard let db = database as? SQLDatabase else {
+            throw EnablePostGISMigrationError.notSqlDatabase
+        }
+        try await db.raw("CREATE EXTENSION IF NOT EXISTS \"postgis\"").run()
+    }
+
+    public func revert(on database: Database) async throws {
+        guard let db = database as? SQLDatabase else {
+            throw EnablePostGISMigrationError.notSqlDatabase
+        }
+        try await db.raw("DROP EXTENSION IF EXISTS \"postgis\"").run()
     }
 }
+
+public var FluentPostGISSrid: UInt = 4326

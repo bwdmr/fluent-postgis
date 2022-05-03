@@ -1,38 +1,73 @@
 # FluentPostGIS
 
-[![Build Status](https://travis-ci.org/plarson/fluent-postgis.svg?branch=master)](https://travis-ci.org/plarson/fluent-postgis)
 ![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20OS%20X-blue.svg)
 ![Package Managers](https://img.shields.io/badge/package%20managers-SwiftPM-yellow.svg)
-[![Twitter dizm](https://img.shields.io/badge/twitter-dizm-green.svg)](http://twitter.com/dizm)
 
-PostGIS support for [FluentPostgreSQL](https://github.com/vapor/fluent-postgresql) and [Vapor](https://github.com/vapor/vapor)
+A fork of the [FluentPostGIS](https://github.com/plarson/fluent-postgis) package which adds support for geographic queries. FluentPostGIS provides PostGIS support for [fluent-postgres-driver](https://github.com/vapor/fluent-postgres-driver) and [Vapor 4](https://github.com/vapor/vapor).
 
 # Installation
 
 ## Swift Package Manager
 
+Add this line to your dependencies in `Package.swift`:
+
 ```swift
-.package(url: "https://github.com/plarson/fluent-postgis.git", .branch("master"))
+.package(url: "https://github.com/brokenhandsio/fluent-postgis.git", from: "0.3.0")
 ```
+
+Then add this line to a target's dependencies:
+
+```swift
+.product(name: "FluentPostGIS", package: "fluent-postgis"),
+```
+
 # Setup
+
 Import module
+
 ```swift
 import FluentPostGIS
 ```
 
-Add to ```configure.swift```
+Optionally, you can add a `Migration` to enable PostGIS:
+
 ```swift
-try services.register(FluentPostGISProvider())
+app.migrations.add(EnablePostGISMigration())
+
 ```
+
 # Models
-Add ```GISGeographicPoint2D``` to your models
+
+Add a type to your model
+
 ```swift
-final class User: PostgreSQLModel {
-    var id: Int?
-    var name: String
-    var location: GISGeographicPoint2D?
+final class User: Model {
+    static let schema = "user"
+    
+    @ID(key: .id)
+    var id: UUID?
+
+    @Field(key: "location")
+    var location: GeometricPoint2D
 }
 ```
+
+Then use its data type in the `Migration`:
+
+```swift
+struct UserMigration: AsyncMigration {
+    func prepare(on database: Database) async throws -> {
+        try await database.schema(User.schema)
+            .id()
+            .field("location", .geometricPoint2D)
+            .create()
+    }
+    func revert(on database: Database) async throws -> {
+        try await database.schema(User.schema).delete()
+    }
+}
+```
+
 | Geometric Types | Geographic Types  |
 |---|---|
 |GeometricPoint2D|GeographicPoint2D|
@@ -44,10 +79,14 @@ final class User: PostgreSQLModel {
 |GeometricGeometryCollection2D|GeographicGeometryCollection2D|
 
 # Queries
-Query locations using ```ST_DWithin```
-```swift        
-let searchLocation = GISGeographicPoint2D(longitude: -71.060316, latitude: 48.432044)
-try User.query(on: conn).filterGeometryDistanceWithin(\User.location, searchLocation, 1000).all().wait()
+
+Query using any of the filter functions:
+
+```swift
+let eiffelTower = GeographicPoint2D(longitude: 2.2945, latitude: 48.858222)
+try await User.query(on: database)
+    .filterGeographyDistanceWithin(\.$location, eiffelTower, 1000)
+    .all()
 ```
 
 | Queries |
@@ -57,11 +96,13 @@ try User.query(on: conn).filterGeometryDistanceWithin(\User.location, searchLoca
 |filterGeometryDisjoint|
 |filterGeometryDistance|
 |filterGeometryDistanceWithin|
+|filterGeographyDistanceWithin|
 |filterGeometryEquals|
 |filterGeometryIntersects|
 |filterGeometryOverlaps|
 |filterGeometryTouches|
 |filterGeometryWithin|
+|sortByDistance|
 
 :gift_heart: Contributing
 ------------
@@ -73,4 +114,6 @@ MIT
 
 :alien: Author
 ------
+BrokenHands, Tim Condon, Nikolai Guyot - https://www.brokenhands.io/
+Ricardo Carvalho - https://rabc.github.io/
 Phil Larson - http://dizm.com

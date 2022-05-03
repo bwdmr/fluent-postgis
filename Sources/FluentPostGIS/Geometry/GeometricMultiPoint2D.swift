@@ -1,43 +1,30 @@
-import Foundation
-import PostgreSQL
+import FluentKit
 import WKCodable
 
-public struct GeometricMultiPoint2D: Codable, Equatable, CustomStringConvertible, PostgreSQLDataConvertible {
+public struct GeometricMultiPoint2D: Codable, Equatable, CustomStringConvertible {
     /// The points
     public var points: [GeometricPoint2D]
-    
+
     /// Create a new `GISGeometricLineString2D`
     public init(points: [GeometricPoint2D]) {
         self.points = points
     }
-    
 }
 
 extension GeometricMultiPoint2D: GeometryConvertible, GeometryCollectable {
     /// Convertible type
     public typealias GeometryType = MultiPoint
-    
+
     public init(geometry lineString: GeometryType) {
         let points = lineString.points.map { GeometricPoint2D(geometry: $0) }
         self.init(points: points)
     }
-    
-    public var geometry: GeometryType {
-        return MultiPoint(points: self.points.map { $0.geometry }, srid: FluentPostGISSrid)
-    }
-    
-    public var baseGeometry: Geometry {
-        return self.geometry
-    }
-}
 
-extension GeometricMultiPoint2D: PostgreSQLDataTypeStaticRepresentable, ReflectionDecodable {
-    
-    /// See `PostgreSQLDataTypeStaticRepresentable`.
-    public static var postgreSQLDataType: PostgreSQLDataType { return .geometricMultiPoint }
-    
-    /// See `ReflectionDecodable`.
-    public static func reflectDecoded() throws -> (GeometricMultiPoint2D, GeometricMultiPoint2D) {
-        return (.init(points: []), .init(points: [GeometricPoint2D(x: 0, y: 0)]))
+    public var geometry: GeometryType {
+        MultiPoint(points: self.points.map(\.geometry), srid: FluentPostGISSrid)
+    }
+
+    public var baseGeometry: Geometry {
+        self.geometry
     }
 }

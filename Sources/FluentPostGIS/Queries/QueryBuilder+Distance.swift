@@ -11,7 +11,7 @@ extension QueryBuilder {
     ) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.queryFilterGeometryDistance(
+        self.filterGeometryDistance(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(filter),
             method,
@@ -21,17 +21,12 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
-    public func queryFilterGeometryDistance(
-        _ path: String,
+    public func filterGeometryDistance(
+        _ path: SQLExpression,
         _ filter: SQLExpression,
         _ method: SQLBinaryOperator,
         _ value: SQLExpression
     ) -> Self {
-        self.query.filters.append(.sql(
-            SQLFunction("ST_Distance", args: [SQLColumn(path), filter]),
-            method,
-            value
-        ))
-        return self
+        self.filter(.sql(SQLFunction("ST_Distance", args: [path, filter]), method, value))
     }
 }

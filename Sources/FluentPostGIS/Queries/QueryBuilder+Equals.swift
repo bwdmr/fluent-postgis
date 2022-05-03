@@ -16,7 +16,7 @@ extension QueryBuilder {
     public func filterGeometryEquals<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.queryGeometryEquals(
+        self.filterGeometryEquals(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(value)
         )
@@ -29,8 +29,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func queryGeometryEquals(_ path: String, _ value: SQLExpression) -> Self {
-        self.applyFilter(function: "ST_Equals", path: path, value: value)
-        return self
+    public func filterGeometryEquals(_ args: SQLExpression...) -> Self {
+        self.filter(function: "ST_Equals", args: args)
     }
 }

@@ -10,7 +10,7 @@ extension QueryBuilder {
     ) -> Self where Field: QueryableProperty, Field.Model == Model,
         Field.Value: GeometryConvertible
     {
-        self.queryFilterDistanceWithin(
+        self.filterDistanceWithin(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(value),
             SQLLiteral.numeric(String(distance))
@@ -25,7 +25,7 @@ extension QueryBuilder {
     ) -> Self where Field: QueryableProperty, Field.Model == Model,
         Field.Value: GeometryConvertible
     {
-        self.queryFilterDistanceWithin(
+        self.filterDistanceWithin(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeography(value),
             SQLLiteral.numeric(String(distance))
@@ -46,7 +46,7 @@ extension QueryBuilder {
         OtherField.Model == OtherModel,
         OtherField.Value == Double
     {
-        self.queryFilterDistanceWithin(
+        self.filterDistanceWithin(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeography(value),
             SQLColumn(QueryBuilder.path(distance))
@@ -55,12 +55,7 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
-    func queryFilterDistanceWithin(
-        _ path: String,
-        _ filter: SQLExpression,
-        _ distance: SQLExpression
-    ) -> Self {
-        self.applyFilter(function: "ST_DWithin", args: [SQLColumn(path), filter, distance])
-        return self
+    func filterDistanceWithin(_ args: SQLExpression...) -> Self {
+        self.filter(function: "ST_DWithin", args: args)
     }
 }

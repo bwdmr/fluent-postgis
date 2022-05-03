@@ -16,7 +16,7 @@ extension QueryBuilder {
     public func sortByDistance<F, V>(between field: KeyPath<Model, F>, _ value: V) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.querySortByDistance(
+        self.sortByDistance(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(value)
         )
@@ -24,8 +24,7 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
-    public func querySortByDistance(_ path: String, _ filter: SQLExpression) -> Self {
-        self.applySort(function: "ST_Distance", args: [SQLColumn(path), filter])
-        return self
+    public func sortByDistance(_ args: SQLExpression...) -> Self {
+        self.sort(function: "ST_Distance", args: args)
     }
 }

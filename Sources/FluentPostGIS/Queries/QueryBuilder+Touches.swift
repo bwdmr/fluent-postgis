@@ -16,7 +16,7 @@ extension QueryBuilder {
     public func filterGeometryTouches<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.queryGeometryTouches(
+        self.filterGeometryTouches(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(value)
         )
@@ -36,7 +36,7 @@ extension QueryBuilder {
     public func filterGeometryTouches<F, V>(_ value: V, _ field: KeyPath<Model, F>) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.queryGeometryTouches(
+        self.filterGeometryTouches(
             QueryBuilder.queryExpressionGeometry(value),
             QueryBuilder.path(field)
         )
@@ -49,18 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func queryGeometryTouches(_ path: String, _ value: SQLExpression) -> Self {
-        self.applyFilter(function: "ST_Touches", path: path, value: value)
-        return self
-    }
-
-    /// Creates an instance of `QueryFilter` for ST_Touches from a field and value.
-    ///
-    /// - parameters:
-    ///     - value: Value type.
-    ///     - field: Field to filter.
-    public func queryGeometryTouches(_ value: SQLExpression, _ path: String) -> Self {
-        self.applyFilter(function: "ST_Touches", value: value, path: path)
-        return self
+    public func filterGeometryTouches(_ args: SQLExpression...) -> Self {
+        self.filter(function: "ST_Touches", args: args)
     }
 }

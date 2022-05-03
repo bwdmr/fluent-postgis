@@ -12,29 +12,20 @@ extension QueryBuilder {
         return SQLFunction("ST_GeogFromText", args: [SQLLiteral.string(geometryText)])
     }
 
-    static func path<M, F>(_ field: KeyPath<M, F>) -> String
+    static func path<M, F>(_ field: KeyPath<M, F>) -> SQLExpression
         where M: Schema, F: QueryableProperty, F.Model == M
     {
-        M.path(for: field).map(\.description).joined(separator: "_")
+        let path = M.path(for: field).map(\.description).joined(separator: "_")
+        return SQLColumn(path)
     }
 }
 
 extension QueryBuilder {
-    func applyFilter(function: String, args: [SQLExpression]) {
-        self.query.filters.append(.custom(SQLFunction(function, args: args)))
+    func filter(function: String, args: [SQLExpression]) -> Self {
+        self.filter(.sql(SQLFunction(function, args: args)))
     }
 
-    func applyFilter(function: String, path: String, value: SQLExpression) {
-        self.applyFilter(function: function, args: [SQLColumn(path), value])
-    }
-
-    func applyFilter(function: String, value: SQLExpression, path: String) {
-        self.applyFilter(function: function, args: [value, SQLColumn(path)])
-    }
-}
-
-extension QueryBuilder {
-    func applySort(function: String, args: [SQLExpression]) {
-        self.query.sorts.append(.custom(SQLFunction(function, args: args)))
+    func sort(function: String, args: [SQLExpression]) -> Self {
+        self.sort(.sql(SQLFunction(function, args: args)))
     }
 }

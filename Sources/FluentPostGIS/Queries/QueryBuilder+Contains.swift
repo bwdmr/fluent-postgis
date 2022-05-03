@@ -16,7 +16,7 @@ extension QueryBuilder {
     public func filterGeometryContains<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.queryGeometryContains(
+        self.filterGeometryContains(
             QueryBuilder.path(field),
             QueryBuilder.queryExpressionGeometry(value)
         )
@@ -36,7 +36,7 @@ extension QueryBuilder {
     public func filterGeometryContains<F, V>(_ value: V, _ field: KeyPath<Model, F>) -> Self
         where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
     {
-        self.queryGeometryContains(
+        self.filterGeometryContains(
             QueryBuilder.queryExpressionGeometry(value),
             QueryBuilder.path(field)
         )
@@ -49,18 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func queryGeometryContains(_ path: String, _ value: SQLExpression) -> Self {
-        self.applyFilter(function: "ST_Contains", path: path, value: value)
-        return self
-    }
-
-    /// Creates an instance of `QueryFilter` for ST_Contains from a field and value.
-    ///
-    /// - parameters:
-    ///     - value: Value type.
-    ///     - field: Field to filter.
-    public func queryGeometryContains(_ value: SQLExpression, _ path: String) -> Self {
-        self.applyFilter(function: "ST_Contains", value: value, path: path)
-        return self
+    public func filterGeometryContains(_ args: SQLExpression...) -> Self {
+        self.filter(function: "ST_Contains", args: args)
     }
 }

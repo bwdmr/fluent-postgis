@@ -17,4 +17,4 @@ jobs:
           POSTGRES_DB: postgis_tests
     steps:
     - uses: actions/checkout@v3
-    - run: swift test --enable-test-discovery
+    - run: swift test

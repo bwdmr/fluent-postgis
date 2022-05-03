@@ -1,6 +1,7 @@
 name: CI
 on:
 - push
+- pull_request
 jobs:
   test:
     name: Run tests
@@ -9,7 +10,7 @@ jobs:
       postgres:
         image: postgis/postgis
         ports:
-          - "5432:5432"
+        - "5432:5432"
         env:
           POSTGRES_USER: fluentpostgis
           POSTGRES_PASSWORD: fluentpostgis

@@ -31,7 +31,3 @@ extension GeographicPoint2D: GeometryConvertible, GeometryCollectable {
         self.geometry
     }
 }
-
-extension GeographicPoint2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geographicPoint }
-}

@@ -41,7 +41,3 @@ extension GeographicPolygon2D: GeometryConvertible, GeometryCollectable {
         self.geometry
     }
 }
-
-extension GeographicPolygon2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geographicPolygon }
-}

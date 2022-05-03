@@ -28,7 +28,3 @@ extension GeographicLineString2D: GeometryConvertible, GeometryCollectable {
         self.geometry
     }
 }
-
-extension GeographicLineString2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geographicLineString }
-}

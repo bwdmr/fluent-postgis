@@ -75,8 +75,3 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
         return true
     }
 }
-
-extension GeographicGeometryCollection2D: PostGISDataType {
-    public static var dataType: DatabaseSchema
-        .DataType { PostGISDataTypeList.geographicGeometryCollection }
-}

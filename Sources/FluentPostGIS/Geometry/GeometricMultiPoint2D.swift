@@ -28,7 +28,3 @@ extension GeometricMultiPoint2D: GeometryConvertible, GeometryCollectable {
         self.geometry
     }
 }
-
-extension GeometricMultiPoint2D: PostGISDataType {
-    public static var dataType: DatabaseSchema.DataType { PostGISDataTypeList.geometricMultiPoint }
-}

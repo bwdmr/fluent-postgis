@@ -59,7 +59,7 @@ struct UserMigration: AsyncMigration {
     func prepare(on database: Database) async throws -> {
         try await database.schema(User.schema)
             .id()
-            .field("location", GeometricPoint2D.dataType)
+            .field("location", .geometricPoint2D)
             .create()
     }
     func revert(on database: Database) async throws -> {

@@ -1,5 +1,5 @@
 import FluentKit
-import WKCodable
+import GEOSwift
 
 public struct GeometricLineString2D: Codable, Equatable, CustomStringConvertible {
     /// The points

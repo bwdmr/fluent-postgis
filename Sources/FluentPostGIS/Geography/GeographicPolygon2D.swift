@@ -1,5 +1,5 @@
 import FluentKit
-import WKCodable
+import GEOSwift
 
 public struct GeographicPolygon2D: Codable, Equatable, CustomStringConvertible {
     /// The points
@@ -19,7 +19,7 @@ public struct GeographicPolygon2D: Codable, Equatable, CustomStringConvertible {
 
 extension GeographicPolygon2D: GeometryConvertible, GeometryCollectable {
     /// Convertible type
-    public typealias GeometryType = WKCodable.Polygon
+    public typealias GeometryType = Polygon
 
     public init(geometry polygon: GeometryType) {
         let exteriorRing = GeographicLineString2D(geometry: polygon.exteriorRing)

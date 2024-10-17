@@ -1,5 +1,5 @@
 import FluentSQL
-import WKCodable
+import GEOSwift
 
 extension QueryBuilder {
     /// Applies an ST_Within filter to this query. Usually you will use the filter operators to do this.

@@ -1,5 +1,5 @@
 import FluentKit
-import WKCodable
+import GEOSwift
 
 public struct GeometricPoint2D: Codable, Equatable, CustomStringConvertible {
     /// The point's x coordinate.

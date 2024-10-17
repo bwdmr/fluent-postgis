@@ -1,5 +1,5 @@
 import FluentSQL
-import WKCodable
+import GEOSwift
 
 extension QueryBuilder {
     @discardableResult

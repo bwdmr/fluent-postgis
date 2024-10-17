@@ -1,5 +1,5 @@
 import FluentSQL
-import WKCodable
+import GEOSwift
 
 extension QueryBuilder {
     static func queryExpressionGeometry<T: GeometryConvertible>(_ geometry: T) -> SQLExpression {

@@ -1,6 +1,6 @@
 import FluentKit
 import Foundation
-import WKCodable
+import GEOSwift
 
 public protocol GeometryCollectable {
     var baseGeometry: Geometry { get }

@@ -1,5 +1,5 @@
 import FluentKit
-import WKCodable
+import GEOSwift
 
 public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible {
     /// The points
@@ -21,7 +21,7 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
                 return GeographicPoint2D(geometry: value)
             } else if let value = $0 as? LineString {
                 return GeographicLineString2D(geometry: value)
-            } else if let value = $0 as? WKCodable.Polygon {
+            } else if let value = $0 as? Polygon {
                 return GeographicPolygon2D(geometry: value)
             } else if let value = $0 as? MultiPoint {
                 return GeographicMultiPoint2D(geometry: value)

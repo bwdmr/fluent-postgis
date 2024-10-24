@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -7,15 +7,12 @@ let package = Package(
         .macOS(.v12),
     ],
     products: [
-        .library(
-            name: "FluentPostGIS",
-            targets: ["FluentPostGIS"]
-        ),
+        .library( name: "FluentPostGIS", targets: ["FluentPostGIS"] ),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/fluent-kit.git", from: "1.0.0"),
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
-        .package(url: "https://github.com/rabc/WKCodable.git", from: "0.1.0"),
+        .package(url: "https://github.com/vapor/fluent-kit.git", from: "1.49.0"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.10.0"),
+        .package(url: "https://github.com/rabc/WKCodable.git", from: "0.1.2"),
     ],
     targets: [
         .target(

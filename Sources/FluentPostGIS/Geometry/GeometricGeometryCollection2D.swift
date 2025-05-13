@@ -1,12 +1,12 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricGeometryCollection2D: Codable, Equatable, CustomStringConvertible {
+public struct GeometricGeometryCollection2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
-    public let geometries: [GeometryCollectable]
+    public let geometries: [any GeometryCollectable]
 
     /// Create a new `GISGeometricGeometryCollection2D`
-    public init(geometries: [GeometryCollectable]) {
+    public init(geometries: [any GeometryCollectable]) {
         self.geometries = geometries
     }
 }
@@ -42,7 +42,7 @@ extension GeometricGeometryCollection2D: GeometryConvertible, GeometryCollectabl
         return .init(geometries: geometries, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 

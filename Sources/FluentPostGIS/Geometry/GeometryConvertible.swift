@@ -2,8 +2,8 @@ import FluentKit
 import Foundation
 import WKCodable
 
-public protocol GeometryCollectable {
-    var baseGeometry: Geometry { get }
+public protocol GeometryCollectable: Sendable {
+    var baseGeometry: any Geometry { get }
     func isEqual(to other: Any?) -> Bool
 }
 
@@ -27,14 +27,14 @@ extension GeometryConvertible where Self: CustomStringConvertible {
 }
 
 extension GeometryConvertible {
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let value = try decoder.singleValueContainer().decode(Data.self)
         let decoder = WKBDecoder()
         let geometry: GeometryType = try decoder.decode(from: value)
         self.init(geometry: geometry)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         let wkEncoder = WKBEncoder(byteOrder: .littleEndian)
         let data = wkEncoder.encode(geometry)
 

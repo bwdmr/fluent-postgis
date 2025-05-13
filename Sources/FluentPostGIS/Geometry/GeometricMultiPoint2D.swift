@@ -24,7 +24,7 @@ extension GeometricMultiPoint2D: GeometryConvertible, GeometryCollectable {
         MultiPoint(points: self.points.map(\.geometry), srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

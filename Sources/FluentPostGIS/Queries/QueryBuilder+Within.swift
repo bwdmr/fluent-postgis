@@ -49,7 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func filterGeometryWithin(_ args: SQLExpression...) -> Self {
+    public func filterGeometryWithin(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_Within", args: args)
     }
 }

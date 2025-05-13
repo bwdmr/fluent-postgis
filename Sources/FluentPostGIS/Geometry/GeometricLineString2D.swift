@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricLineString2D: Codable, Equatable, CustomStringConvertible {
+public struct GeometricLineString2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public var points: [GeometricPoint2D]
 
@@ -24,7 +24,7 @@ extension GeometricLineString2D: GeometryConvertible, GeometryCollectable {
         .init(points: self.points.map(\.geometry), srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

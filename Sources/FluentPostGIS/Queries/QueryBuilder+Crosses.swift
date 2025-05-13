@@ -49,7 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func filterGeometryCrosses(_ args: SQLExpression...) -> Self {
+    public func filterGeometryCrosses(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_Crosses", args: args)
     }
 }

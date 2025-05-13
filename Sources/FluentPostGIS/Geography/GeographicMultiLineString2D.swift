@@ -25,7 +25,7 @@ extension GeographicMultiLineString2D: GeometryConvertible, GeometryCollectable 
         return .init(lineStrings: lineStrings, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

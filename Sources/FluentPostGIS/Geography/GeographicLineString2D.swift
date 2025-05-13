@@ -24,7 +24,7 @@ extension GeographicLineString2D: GeometryConvertible, GeometryCollectable {
         .init(points: self.points.map(\.geometry), srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

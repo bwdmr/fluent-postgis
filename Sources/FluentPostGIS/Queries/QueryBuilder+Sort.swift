@@ -24,7 +24,7 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
-    public func sortByDistance(_ args: SQLExpression...) -> Self {
+    public func sortByDistance(_ args: any SQLExpression...) -> Self {
         self.sort(function: "ST_Distance", args: args)
     }
 }

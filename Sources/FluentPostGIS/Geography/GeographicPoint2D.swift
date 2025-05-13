@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeographicPoint2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicPoint2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The point's x coordinate.
     public var longitude: Double
 
@@ -27,7 +27,7 @@ extension GeographicPoint2D: GeometryConvertible, GeometryCollectable {
         .init(vector: [self.longitude, self.latitude], srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

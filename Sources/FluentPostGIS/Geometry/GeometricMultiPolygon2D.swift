@@ -25,7 +25,7 @@ extension GeometricMultiPolygon2D: GeometryConvertible, GeometryCollectable {
         return .init(polygons: polygons, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

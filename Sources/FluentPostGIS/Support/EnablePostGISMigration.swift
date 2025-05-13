@@ -4,7 +4,7 @@ import SQLKit
 public struct EnablePostGISMigration: AsyncMigration, Sendable {
     public init() {}
 
-    public enum EnablePostGISMigrationError: Error {
+    public enum EnablePostGISMigrationError: Error, Sendable {
         case notSqlDatabase
     }
 

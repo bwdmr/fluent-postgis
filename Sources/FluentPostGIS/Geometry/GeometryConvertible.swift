@@ -7,7 +7,7 @@ public protocol GeometryCollectable: Sendable {
     func isEqual(to other: Any?) -> Bool
 }
 
-public protocol GeometryConvertible {
+public protocol GeometryConvertible: Sendable {
     associatedtype GeometryType: Geometry
     init(geometry: GeometryType)
     var geometry: GeometryType { get }

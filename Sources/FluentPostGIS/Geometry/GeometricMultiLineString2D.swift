@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricMultiLineString2D: Codable, Equatable, CustomStringConvertible {
+public struct GeometricMultiLineString2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public let lineStrings: [GeometricLineString2D]
 

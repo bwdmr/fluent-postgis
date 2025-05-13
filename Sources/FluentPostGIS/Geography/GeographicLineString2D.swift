@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeographicLineString2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicLineString2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public var points: [GeographicPoint2D]
 

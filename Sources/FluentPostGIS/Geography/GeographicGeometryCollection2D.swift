@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public let geometries: [any GeometryCollectable]
 

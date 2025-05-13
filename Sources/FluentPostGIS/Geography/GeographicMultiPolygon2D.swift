@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeographicMultiPolygon2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicMultiPolygon2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public let polygons: [GeographicPolygon2D]
 

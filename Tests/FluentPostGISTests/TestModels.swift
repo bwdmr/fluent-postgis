@@ -1,7 +1,7 @@
 import FluentKit
 import FluentPostGIS
 
-final class UserLocation: Model {
+final class UserLocation: Model, @unchecked Sendable {
     static let schema = "user_location"
 
     @ID(custom: .id, generatedBy: .database)
@@ -18,20 +18,20 @@ final class UserLocation: Model {
 }
 
 struct UserLocationMigration: AsyncMigration {
-    func prepare(on database: Database) async throws {
+    func prepare(on database: any Database) async throws {
         try await database.schema(UserLocation.schema)
             .field(.id, .int, .identifier(auto: true))
             .field("location", .geometricPoint2D)
             .create()
     }
 
-    func revert(on database: Database) async throws {
+    func revert(on database: any Database) async throws {
         try await database.schema(UserLocation.schema).delete()
     }
 }
 
 /// A model for testing `GeographicPoint2D`-related functionality
-final class City: Model {
+final class City: Model, @unchecked Sendable {
     static let schema = "city_location"
 
     @ID(custom: .id, generatedBy: .database)
@@ -48,20 +48,20 @@ final class City: Model {
 }
 
 struct CityMigration: AsyncMigration {
-    func prepare(on database: Database) async throws {
+    func prepare(on database: any Database) async throws {
         try await database.schema(City.schema)
             .field(.id, .int, .identifier(auto: true))
             .field("location", .geographicPoint2D)
             .create()
     }
 
-    func revert(on database: Database) async throws {
+    func revert(on database: any Database) async throws {
         try await database.schema(City.schema).delete()
     }
 }
 
-final class UserPath: Model {
-    static var schema: String = "user_path"
+final class UserPath: Model, @unchecked Sendable {
+    static let schema: String = "user_path"
 
     @ID(custom: .id, generatedBy: .database)
     var id: Int?
@@ -77,20 +77,20 @@ final class UserPath: Model {
 }
 
 struct UserPathMigration: AsyncMigration {
-    func prepare(on database: Database) async throws {
+    func prepare(on database: any Database) async throws {
         try await database.schema(UserPath.schema)
             .field(.id, .int, .identifier(auto: true))
             .field("path", .geometricLineString2D)
             .create()
     }
 
-    func revert(on database: Database) async throws {
+    func revert(on database: any Database) async throws {
         try await database.schema(UserPath.schema).delete()
     }
 }
 
-final class UserArea: Model {
-    static var schema: String = "user_area"
+final class UserArea: Model, @unchecked Sendable {
+    static let schema: String = "user_area"
 
     @ID(custom: .id, generatedBy: .database)
     var id: Int?
@@ -106,20 +106,20 @@ final class UserArea: Model {
 }
 
 struct UserAreaMigration: AsyncMigration {
-    func prepare(on database: Database) async throws {
+    func prepare(on database: any Database) async throws {
         try await database.schema(UserArea.schema)
             .field(.id, .int, .identifier(auto: true))
             .field("area", .geometricPolygon2D)
             .create()
     }
 
-    func revert(on database: Database) async throws {
+    func revert(on database: any Database) async throws {
         try await database.schema(UserArea.schema).delete()
     }
 }
 
-final class UserCollection: Model {
-    static var schema: String = "user_collection"
+final class UserCollection: Model, @unchecked Sendable {
+    static let schema: String = "user_collection"
 
     @ID(custom: .id, generatedBy: .database)
     var id: Int?
@@ -135,14 +135,14 @@ final class UserCollection: Model {
 }
 
 struct UserCollectionMigration: AsyncMigration {
-    func prepare(on database: Database) async throws {
+    func prepare(on database: any Database) async throws {
         try await database.schema(UserCollection.schema)
             .field(.id, .int, .identifier(auto: true))
             .field("collection", .geometricGeometryCollection2D)
             .create()
     }
 
-    func revert(on database: Database) async throws {
+    func revert(on database: any Database) async throws {
         try await database.schema(UserCollection.schema).delete()
     }
 }

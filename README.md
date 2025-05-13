@@ -41,7 +41,7 @@ app.migrations.add(EnablePostGISMigration())
 Add a type to your model
 
 ```swift
-final class User: Model {
+final class User: Model, @unchecked Sendable {
     static let schema = "user"
     
     @ID(key: .id)

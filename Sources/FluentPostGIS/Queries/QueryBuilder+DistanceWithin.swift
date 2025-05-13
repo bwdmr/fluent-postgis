@@ -55,7 +55,7 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
-    func filterDistanceWithin(_ args: SQLExpression...) -> Self {
+    func filterDistanceWithin(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_DWithin", args: args)
     }
 }

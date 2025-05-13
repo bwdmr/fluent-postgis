@@ -49,7 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func filterGeometryOverlaps(_ args: SQLExpression...) -> Self {
+    public func filterGeometryOverlaps(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_Overlaps", args: args)
     }
 }

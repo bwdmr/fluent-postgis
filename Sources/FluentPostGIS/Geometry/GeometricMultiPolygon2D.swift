@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricMultiPolygon2D: Codable, Equatable, CustomStringConvertible {
+public struct GeometricMultiPolygon2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public let polygons: [GeometricPolygon2D]
 
@@ -25,7 +25,7 @@ extension GeometricMultiPolygon2D: GeometryConvertible, GeometryCollectable {
         return .init(polygons: polygons, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

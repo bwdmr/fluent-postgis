@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricMultiPoint2D: Codable, Equatable, CustomStringConvertible {
+public struct GeometricMultiPoint2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public var points: [GeometricPoint2D]
 
@@ -24,7 +24,7 @@ extension GeometricMultiPoint2D: GeometryConvertible, GeometryCollectable {
         MultiPoint(points: self.points.map(\.geometry), srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

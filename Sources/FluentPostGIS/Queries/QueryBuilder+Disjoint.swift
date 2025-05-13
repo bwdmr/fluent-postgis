@@ -49,7 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func filterGeometryDisjoint(_ args: SQLExpression...) -> Self {
+    public func filterGeometryDisjoint(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_Disjoint", args: args)
     }
 }

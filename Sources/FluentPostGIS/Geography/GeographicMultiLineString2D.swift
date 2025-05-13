@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeographicMultiLineString2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicMultiLineString2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public let lineStrings: [GeographicLineString2D]
 
@@ -25,7 +25,7 @@ extension GeographicMultiLineString2D: GeometryConvertible, GeometryCollectable 
         return .init(lineStrings: lineStrings, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

@@ -1,12 +1,12 @@
 import FluentKit
 import WKCodable
 
-public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible {
+public struct GeographicGeometryCollection2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
-    public let geometries: [GeometryCollectable]
+    public let geometries: [any GeometryCollectable]
 
     /// Create a new `GISGeographicGeometryCollection2D`
-    public init(geometries: [GeometryCollectable]) {
+    public init(geometries: [any GeometryCollectable]) {
         self.geometries = geometries
     }
 }
@@ -43,17 +43,17 @@ extension GeographicGeometryCollection2D: GeometryConvertible, GeometryCollectab
         return .init(geometries: geometries, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         let wkbGeometry: GeometryCollection = try WKTDecoder().decode(from: value)
         self.init(geometry: wkbGeometry)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         let wktEncoder = WKTEncoder()
         let value = wktEncoder.encode(self.geometry)
         var container = encoder.singleValueContainer()

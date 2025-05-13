@@ -49,7 +49,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func filterGeometryContains(_ args: SQLExpression...) -> Self {
+    public func filterGeometryContains(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_Contains", args: args)
     }
 }

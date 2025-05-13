@@ -1,8 +1,8 @@
 --extensionacl on-declarations
 --header strip
---maxwidth 100
+--maxwidth 140
 --self insert
---swiftversion 5.5
+--swiftversion 5.10
 --wraparguments before-first
 --wrapcollections before-first
 --wrapparameters before-first

@@ -1,7 +1,7 @@
 import FluentKit
 import WKCodable
 
-public struct GeometricPolygon2D: Codable, Equatable, CustomStringConvertible {
+public struct GeometricPolygon2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
     public let exteriorRing: GeometricLineString2D
     public let interiorRings: [GeometricLineString2D]
@@ -37,7 +37,7 @@ extension GeometricPolygon2D: GeometryConvertible, GeometryCollectable {
         )
     }
 
-    public var baseGeometry: Geometry {
+    public var baseGeometry: any Geometry {
         self.geometry
     }
 }

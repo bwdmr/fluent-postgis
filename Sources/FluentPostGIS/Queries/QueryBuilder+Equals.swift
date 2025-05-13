@@ -29,7 +29,7 @@ extension QueryBuilder {
     /// - parameters:
     ///     - field: Field to filter.
     ///     - value: Value type.
-    public func filterGeometryEquals(_ args: SQLExpression...) -> Self {
+    public func filterGeometryEquals(_ args: any SQLExpression...) -> Self {
         self.filter(function: "ST_Equals", args: args)
     }
 }

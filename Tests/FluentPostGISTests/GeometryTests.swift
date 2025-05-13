@@ -56,7 +56,7 @@ final class GeometryTests: FluentPostGISTestCase {
             exteriorRing: lineString,
             interiorRings: [lineString, lineString]
         )
-        let geometries: [GeometryCollectable] = [point, point2, point3, lineString, polygon]
+        let geometries: [any GeometryCollectable] = [point, point2, point3, lineString, polygon]
         let geometryCollection = GeometricGeometryCollection2D(geometries: geometries)
 
         let user = UserCollection(collection: geometryCollection)

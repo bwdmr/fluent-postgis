@@ -5,7 +5,7 @@ import XCTest
 
 class FluentPostGISTestCase: XCTestCase {
     var dbs: Databases!
-    var db: Database {
+    var db: any Database {
         self.dbs.database(
             logger: .init(label: "lib.fluent.postgis"),
             on: self.dbs.eventLoopGroup.next()
@@ -16,11 +16,12 @@ class FluentPostGISTestCase: XCTestCase {
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let threadPool = NIOThreadPool(numberOfThreads: 1)
         self.dbs = Databases(threadPool: threadPool, on: eventLoopGroup)
-        let configuration = PostgresConfiguration(
+        let configuration = SQLPostgresConfiguration(
             hostname: "localhost",
             username: "fluentpostgis",
             password: "fluentpostgis",
-            database: "postgis_tests"
+            database: "postgis_tests",
+            tls: .disable
         )
         self.dbs.use(.postgres(configuration: configuration), as: .psql)
 
@@ -35,7 +36,7 @@ class FluentPostGISTestCase: XCTestCase {
         }
     }
 
-    private let migrations: [AsyncMigration] = [
+    private let migrations: [any AsyncMigration] = [
         UserLocationMigration(),
         CityMigration(),
         UserPathMigration(),

@@ -1,6 +1,42 @@
 import FluentKit
 import FluentPostGIS
 
+
+
+final class Host: ModelAlias {
+    static let name = "host"
+    let model = Guest()
+}
+
+final class Guest: Model, @unchecked Sendable {
+    static let schema: String = "guest"
+    
+    @ID(custom: .id, generatedBy: .database)
+    var id: Int?
+    
+    @OptionalParent(key: "host_id")
+    var host: Guest?
+    
+    init() {}
+    
+    init(hostID: Guest.IDValue? = nil) {
+        self.$host.id = hostID
+    }
+}
+
+struct GuestMigration: AsyncMigration {
+    func prepare(on database: any Database) async throws {
+        try await database.schema(Guest.schema)
+            .field(.id, .int, .identifier(auto: true))
+            .field("host_id", .int, .references(Guest.schema, "id"))
+            .create()
+    }
+    
+    func revert(on database: any Database) async throws {
+        try await database.schema(Guest.schema).delete()
+    }
+}
+
 final class UserLocation: Model, @unchecked Sendable {
     static let schema = "user_location"
 

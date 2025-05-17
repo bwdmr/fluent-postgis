@@ -1,5 +1,6 @@
 import FluentKit
 import FluentPostgresDriver
+import FluentPostGIS
 import PostgresKit
 import XCTest
 
@@ -11,7 +12,7 @@ class FluentPostGISTestCase: XCTestCase {
             on: self.dbs.eventLoopGroup.next()
         )!
     }
-
+  
     override func setUp() async throws {
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let threadPool = NIOThreadPool(numberOfThreads: 1)
@@ -25,6 +26,7 @@ class FluentPostGISTestCase: XCTestCase {
         )
         self.dbs.use(.postgres(configuration: configuration), as: .psql)
 
+        try await EnablePostGISMigration().prepare(on: self.db)
         for migration in self.migrations {
             try await migration.prepare(on: self.db)
         }
@@ -34,6 +36,7 @@ class FluentPostGISTestCase: XCTestCase {
         for migration in self.migrations {
             try await migration.revert(on: self.db)
         }
+        try await EnablePostGISMigration().revert(on: self.db)
     }
 
     private let migrations: [any AsyncMigration] = [
@@ -42,5 +45,6 @@ class FluentPostGISTestCase: XCTestCase {
         UserPathMigration(),
         UserAreaMigration(),
         UserCollectionMigration(),
+        GuestMigration()
     ]
 }

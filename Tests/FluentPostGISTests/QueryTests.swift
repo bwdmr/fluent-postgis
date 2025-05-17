@@ -1,7 +1,24 @@
 @testable import FluentPostGIS
+import FluentKit
 import XCTest
 
 final class QueryTests: FluentPostGISTestCase {
+    func testAlias() {
+        let query = Guest.query(on: self.db)
+            .join(Host.self, on: \Guest.$host.$id == \Host.$id)
+        
+        for join in query.query.joins {
+            if case DatabaseQuery.Join.join(
+                schema: let schema,
+                alias: let alias?,
+                let method,
+                let foreign,
+                let local
+            ) = join
+            { XCTAssertTrue(!alias.isEmpty) }
+        }
+    }
+    
     func testContains() async throws {
         let exteriorRing = GeometricLineString2D(points: [
             GeometricPoint2D(x: 0, y: 0),

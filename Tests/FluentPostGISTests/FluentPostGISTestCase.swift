@@ -1,4 +1,5 @@
 import FluentKit
+import FluentPostGIS
 import FluentPostgresDriver
 import PostgresKit
 import XCTest

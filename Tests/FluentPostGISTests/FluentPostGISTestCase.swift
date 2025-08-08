@@ -37,10 +37,11 @@ class FluentPostGISTestCase: XCTestCase {
     }
 
     private let migrations: [any AsyncMigration] = [
+        EnablePostGISMigration(),
         UserLocationMigration(),
         CityMigration(),
         UserPathMigration(),
         UserAreaMigration(),
-        UserCollectionMigration(),
+        UserCollectionMigration()
     ]
 }

@@ -27,7 +27,7 @@ extension GeographicPoint2D: GeometryConvertible, GeometryCollectable {
         .init(vector: [self.longitude, self.latitude], srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: any Geometry {
+    public var baseGeometry: any Geometry & Sendable {
         self.geometry
     }
 }

@@ -3,10 +3,10 @@ import WKCodable
 
 public struct GeometricGeometryCollection2D: Codable, Equatable, CustomStringConvertible, Sendable {
     /// The points
-    public let geometries: [any GeometryCollectable]
+    public let geometries: [any GeometryCollectable & Sendable]
 
     /// Create a new `GISGeometricGeometryCollection2D`
-    public init(geometries: [any GeometryCollectable]) {
+    public init(geometries: [any GeometryCollectable & Sendable]) {
         self.geometries = geometries
     }
 }
@@ -42,7 +42,7 @@ extension GeometricGeometryCollection2D: GeometryConvertible, GeometryCollectabl
         return .init(geometries: geometries, srid: FluentPostGISSrid)
     }
 
-    public var baseGeometry: any Geometry {
+    public var baseGeometry: any Geometry & Sendable {
         self.geometry
     }
 

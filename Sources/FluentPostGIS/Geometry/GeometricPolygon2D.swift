@@ -37,7 +37,7 @@ extension GeometricPolygon2D: GeometryConvertible, GeometryCollectable {
         )
     }
 
-    public var baseGeometry: any Geometry {
+    public var baseGeometry: any Geometry & Sendable {
         self.geometry
     }
 }

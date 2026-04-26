@@ -4,14 +4,17 @@ import PackageDescription
 let package = Package(
     name: "fluent-postgis",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v10_15),
+        .iOS(.v13),
+        .watchOS(.v6),
+        .tvOS(.v13),
     ],
     products: [
         .library(name: "FluentPostGIS", targets: ["FluentPostGIS"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-configuration", from: "1.2.0"),
-        .package(url: "https://github.com/vapor/fluent-kit.git", from: "1.56.0"),
+        .package(url: "https://github.com/bwdmr/fluent-kit.git", from: "1.57.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.12.0"),
         .package(url: "https://github.com/bwdmr/WKCodable.git", from: "2.0.0")
     ],

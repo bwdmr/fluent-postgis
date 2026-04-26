@@ -16,7 +16,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-configuration", from: "1.2.0"),
         .package(url: "https://github.com/bwdmr/fluent-kit.git", from: "1.57.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.12.0"),
-        .package(url: "https://github.com/bwdmr/WKCodable.git", from: "2.0.0")
+        .package(url: "https://github.com/bwdmr/WKCodable.git", from: "2.0.1")
     ],
     targets: [
         .target(

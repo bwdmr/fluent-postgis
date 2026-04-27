@@ -12,9 +12,14 @@ extension QueryBuilder {
     ///     - key: Swift `KeyPath` to a field on the model to filter.
     ///     - value: Geometry value to filter by.
     /// - returns: Query builder for chaining.
+    ///
     @discardableResult
-    public func filterGeometryEquals<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
-        where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
+    public func filterGeometryEquals<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ field: KeyPath<Joined, F>,
+        _ value: V
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
     {
         self.filterGeometryEquals(
             QueryBuilder.path(field),

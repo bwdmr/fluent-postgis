@@ -44,6 +44,38 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
+    /// Applies an ST_Touches filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryTouches<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ field: KeyPath<Joined, F>,
+        _ value: V
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryTouches(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
+    }
+
+    /// Applies a reversed ST_Touches filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryTouches<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ value: V,
+        _ field: KeyPath<Joined, F>
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryTouches(
+            QueryBuilder.queryExpressionGeometry(value),
+            QueryBuilder.path(field)
+        )
+    }
+}
+
+extension QueryBuilder {
     /// Creates an instance of `QueryFilter` for ST_Touches from a field and value.
     ///
     /// - parameters:

@@ -21,6 +21,21 @@ extension QueryBuilder {
             QueryBuilder.queryExpressionGeometry(value)
         )
     }
+
+    /// Applies an `ST_Distance` sort to a joined model's field.
+    @discardableResult
+    public func sortByDistance<Joined, F, V>(
+        _ joined: Joined.Type,
+        between field: KeyPath<Joined, F>,
+        _ value: V
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.sortByDistance(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
+    }
 }
 
 extension QueryBuilder {

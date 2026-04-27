@@ -44,6 +44,38 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
+    /// Applies an ST_Overlaps filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryOverlaps<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ field: KeyPath<Joined, F>,
+        _ value: V
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryOverlaps(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
+    }
+
+    /// Applies a reversed ST_Overlaps filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryOverlaps<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ value: V,
+        _ field: KeyPath<Joined, F>
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryOverlaps(
+            QueryBuilder.queryExpressionGeometry(value),
+            QueryBuilder.path(field)
+        )
+    }
+}
+
+extension QueryBuilder {
     /// Creates an instance of `QueryFilter` for ST_Overlaps from a field and value.
     ///
     /// - parameters:

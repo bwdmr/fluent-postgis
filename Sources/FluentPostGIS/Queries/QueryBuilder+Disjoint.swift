@@ -44,6 +44,38 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
+    /// Applies an ST_Disjoint filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryDisjoint<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ field: KeyPath<Joined, F>,
+        _ value: V
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryDisjoint(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
+    }
+
+    /// Applies a reversed ST_Disjoint filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryDisjoint<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ value: V,
+        _ field: KeyPath<Joined, F>
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryDisjoint(
+            QueryBuilder.queryExpressionGeometry(value),
+            QueryBuilder.path(field)
+        )
+    }
+}
+
+extension QueryBuilder {
     /// Creates an instance of `QueryFilter` for ST_Disjoint from a field and value.
     ///
     /// - parameters:

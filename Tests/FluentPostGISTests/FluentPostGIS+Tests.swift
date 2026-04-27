@@ -40,7 +40,7 @@ actor TestDatabase {
     private nonisolated func pgConfig() -> SQLPostgresConfiguration {
         let env = ProcessInfo.processInfo.environment
         return SQLPostgresConfiguration(
-            hostname: env["DB_HOST"] ?? "localhost",
+            hostname: env["DB_HOST"] ?? "127.0.0.1",
             port: env["DB_PORT"].flatMap(Int.init) ?? 55432,
             username: env["DB_USER"] ?? "fluentpostgis",
             password: env["DB_PASS"] ?? "fluentpostgis",

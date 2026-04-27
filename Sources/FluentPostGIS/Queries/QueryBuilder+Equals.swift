@@ -12,7 +12,30 @@ extension QueryBuilder {
     ///     - key: Swift `KeyPath` to a field on the model to filter.
     ///     - value: Geometry value to filter by.
     /// - returns: Query builder for chaining.
+    @discardableResult
+    public func filterGeometryEquals<F, V>(_ field: KeyPath<Model, F>, _ value: V) -> Self
+        where F: QueryableProperty, F.Model == Model, V: GeometryConvertible
+    {
+        self.filterGeometryEquals(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
+    }
+}
+
+extension QueryBuilder {
+    /// Applies an ST_Equals filter to a joined model's field.
     ///
+    ///     let results = try Parent.query(on: db)
+    ///         .join(Child.self, on: \Parent.$id == \Child.$parentID)
+    ///         .filterGeometryEquals(Child.self, \.$area, polygon)
+    ///         .all()
+    ///
+    /// - parameters:
+    ///     - joined: The joined model type.
+    ///     - field: Swift `KeyPath` to a field on the joined model to filter.
+    ///     - value: Geometry value to filter by.
+    /// - returns: Query builder for chaining.
     @discardableResult
     public func filterGeometryEquals<Joined, F, V>(
         _ joined: Joined.Type,

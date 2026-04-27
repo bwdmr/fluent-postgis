@@ -44,6 +44,38 @@ extension QueryBuilder {
 }
 
 extension QueryBuilder {
+    /// Applies an ST_Crosses filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryCrosses<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ field: KeyPath<Joined, F>,
+        _ value: V
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryCrosses(
+            QueryBuilder.path(field),
+            QueryBuilder.queryExpressionGeometry(value)
+        )
+    }
+
+    /// Applies a reversed ST_Crosses filter to a joined model's field.
+    @discardableResult
+    public func filterGeometryCrosses<Joined, F, V>(
+        _ joined: Joined.Type,
+        _ value: V,
+        _ field: KeyPath<Joined, F>
+    ) -> Self
+        where Joined: Schema, F: QueryableProperty, F.Model == Joined, V: GeometryConvertible
+    {
+        self.filterGeometryCrosses(
+            QueryBuilder.queryExpressionGeometry(value),
+            QueryBuilder.path(field)
+        )
+    }
+}
+
+extension QueryBuilder {
     /// Creates an instance of `QueryFilter` for ST_Crosses from a field and value.
     ///
     /// - parameters:

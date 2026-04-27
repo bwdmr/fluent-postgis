@@ -1,5 +1,4 @@
 import Foundation
-import Configuration
 import NIOConcurrencyHelpers
 import FluentPostGIS
 import FluentPostgresDriver
@@ -39,13 +38,13 @@ actor TestDatabase {
     // MARK: - Postgres config
 
     private nonisolated func pgConfig() -> SQLPostgresConfiguration {
-        let env = ConfigReader(provider: EnvironmentVariablesProvider())
+        let env = ProcessInfo.processInfo.environment
         return SQLPostgresConfiguration(
-            hostname: env.string(forKey: "DB_HOST", default: "localhost"),
-            port: env.int(forKey: "DB_PORT", default: 55432),
-            username: env.string(forKey: "DB_USER", default: "fluentpostgis"),
-            password: env.string(forKey: "DB_PASS", default: "fluentpostgis"),
-            database: env.string(forKey: "DB_NAME", default: "postgis_tests"),
+            hostname: env["DB_HOST"] ?? "localhost",
+            port: env["DB_PORT"].flatMap(Int.init) ?? 55432,
+            username: env["DB_USER"] ?? "fluentpostgis",
+            password: env["DB_PASS"] ?? "fluentpostgis",
+            database: env["DB_NAME"] ?? "postgis_tests",
             tls: .disable
         )
     }
